@@ -18,17 +18,31 @@ html {
   background-color: #3B623F;
   color: #F8FAF2;
   font-weight: 400;
-  z-index: 9999;
+  z-index: 999999999;
 }
 
 main {
+  padding-top: 30px;
   overflow: auto;
-  width: calc(100vw-10px);
+  width: calc(100vw - 10px);
   height: 100%;
   padding-right: 10px;
   box-sizing: content-box;
 }
-
+aside {
+  position: fixed;  
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 300px;
+  border-right: 1px solid #b6b6b6;
+  z-index: 10000;
+}
+aside img {
+  width: 30%;
+  margin-top: 7vh;
+  margin-left: 2vw;
+}
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
