@@ -1,44 +1,53 @@
 html {
-    color: #ffffff;
-    background: rgb(22, 23, 26);
-    font-family: Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  background: #F8FAF2;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
-
-header {
-    text-align: center;
-    font-size: x-large;
-    font-weight: bold;
-    padding: 20px;
-    -webkit-app-region: drag;
+.titleBar {
+  -webkit-app-region: drag;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  background-color: #3B623F;
+  color: #F8FAF2;
+  font-weight: 400;
+  z-index: 9999;
 }
 
 main {
-    overflow: auto;
-    width: calc(100vw-10px);
-    height: 100%;
-    padding-right: 10px;
-    box-sizing: content-box; 
+  overflow: auto;
+  width: calc(100vw-10px);
+  height: 100%;
+  padding-right: 10px;
+  box-sizing: content-box;
 }
 
 ::-webkit-scrollbar {
-    width: 8px; 
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
-  
+
 ::-webkit-scrollbar-track {
-    background: #2c2c2c;
-    border-radius: 4px;
+  background: #2c2c2c;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #555555;
-    border-radius: 4px;
+  background: #555555;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #777777;
+  background: #777777;
 }
 
 ::-webkit-scrollbar-thumb:active {
-    background: #aaaaaa;
+  background: #aaaaaa;
 }
