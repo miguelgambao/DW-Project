@@ -1,0 +1,12 @@
+[
+  {
+    "_id": 1,
+    "title": "Finish project",
+    "description": "Complete all features",
+    "due_date": "2025-01-01",
+    "created_at": "2024-12-20",
+    "updated_at": "2024-12-25",
+    "completed": false,
+    "user_email": "user@example.com"
+  }
+]
