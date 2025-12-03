@@ -9,9 +9,9 @@ async function main() {
 		width: 1000, height: 700,
 		titleBarStyle: 'hidden',
 		titleBarOverlay: {
-		  symbolColor: '#FFF',
-		  color: '#2b252c',
-		  height: 	10
+		  symbolColor: '#F8FAF2',
+		  color: '#3B623F',
+		  height: 	30
 		}
 	})
     window.on('closed', () => app.quit())
