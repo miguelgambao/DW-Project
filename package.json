@@ -3,6 +3,7 @@
     "start": "electron main.js"
   },
   "dependencies": {
-    "electron": "^33.4.11"
+    "electron": "^33.4.11",
+    "mongodb": "^7.0.0"
   }
 }
