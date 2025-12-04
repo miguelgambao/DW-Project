@@ -9,12 +9,14 @@
   --black: #2c2c2c;
 
   --border-radius: 8px;
-  --font-size-label: 0.625rem;
+  --font-size-p-small:0.75rem;
+  --font-size-label: 0.875rem;
+  --font-size-button-M: 1rem;
 }
 
 @font-face {
     font-family: 'Inter';
-    src: url('fonts/Inter-VariableFont_opsz,wght.woff2') format('woff2');
+    src: url('assets/fonts/Inter-VariableFont_opsz\,wght.woff2') format('woff2');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -106,4 +108,33 @@ aside img {
 label{
   color: var(--black);
   padding-bottom: 0.2rem;
+}
+
+.button-primary{
+  width:40%;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--dark-green);
+  color: var(--light-green);
+  cursor: pointer;
+}
+
+.M{
+  padding: 0.5rem 1rem;
+  margin: 0.2rem;
+  font-size: var(--font-size-button-M);
+}
+
+.paragraph-small{
+  font-size: var(--font-size-p-small);
+  color: var(--black)
+}
+
+.button-terciary{
+  font-size: var(--font-size-p-small);
+  background: none;
+  border: none;
+  color: var(--dark-green);
+  cursor: pointer;
+  text-decoration: underline;
 }
