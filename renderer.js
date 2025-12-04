@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded", () => {
-  const loginSection = document.getElementsByClassName("login-section");
+  const loginSection = document.querySelector(".login-section");
 
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
