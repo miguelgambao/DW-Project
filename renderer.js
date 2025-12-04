@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded", () => {
-  const loginSection = document.getElementById("login-section");
+  const loginSection = document.getElementsByClassName("login-section");
 
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -54,7 +54,6 @@ window.addEventListener("DOMContentLoaded", () => {
     dashboardSection.innerHTML = `
         <h2>Welcome!</h2>
         <div id="user-info">Logged in as: ${username}</div>
-        <div class="titleBar">Podoro</div>
         <main>
             <aside>
                 <img src="media/logoHorizontal.svg" alt="">
