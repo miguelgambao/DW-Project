@@ -5,8 +5,5 @@
   "dependencies": {
     "electron": "^33.4.11",
     "mongodb": "^7.0.0"
-  },
-  "devDependencies": {
-    "electronmon": "^2.0.4"
   }
 }
