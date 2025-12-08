@@ -8,15 +8,9 @@ export function RegisterUI() {
     registerButton.addEventListener("click", () => {
         isRegisterMode = !isRegisterMode;
 
-        if (isRegisterMode) {
-            formTitle.textContent = "Register";
-            loginButton.textContent = "Create Account";
-            registerButton.textContent = "Back to Login";
-        } else {
-            formTitle.textContent = "Login";
-            loginButton.textContent = "Login";
-            registerButton.textContent = "Register";
-        }
+        formTitle.textContent = isRegisterMode ? "Register" : "Login";
+        loginButton.textContent = isRegisterMode ? "Register" : "Login";
+        registerButton.textContent = isRegisterMode ? "Login" : "Register";
     });
 
     return {
