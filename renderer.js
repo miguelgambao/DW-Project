@@ -3,7 +3,13 @@ import {RegisterUI} from "./client/registerUI.js";
 window.addEventListener("DOMContentLoaded", () => {
     const loginSection = document.querySelector(".login-section");
     const registerUI = RegisterUI();
+    const savedUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
+    if (savedUser) {
+        showDashboard(savedUser.email);
+        return;
+    }
+    
     function isValidEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
@@ -30,6 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const userId = await window.api.loginUser(email, password);
         if (userId) {
+            localStorage.setItem("loggedInUser", JSON.stringify({ email, userId }));
             showDashboard(email);
         } else {
             alert("Invalid email or password.");
