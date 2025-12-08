@@ -64,8 +64,6 @@ window.addEventListener("DOMContentLoaded", () => {
         <section class="content"></section>
       </main>
     `;
-
-        dashboardSection.style.display = "block";
         showDashboardTasks(username);
     }
 });

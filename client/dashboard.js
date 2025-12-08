@@ -1,8 +1,8 @@
 export async function showDashboardTasks(userEmail) {
-    const dashboardSection = document.getElementById("dashboard-section");
+    const contentSection = document.querySelector(".content");
 
-    if (!dashboardSection) {
-        console.error("Dashboard section not found");
+    if (!contentSection) {
+        console.error("Content section not found");
         return;
     }
 
@@ -13,14 +13,14 @@ export async function showDashboardTasks(userEmail) {
 
         console.log(`Tasks received for ${userEmail}:`, tasks);
 
-        dashboardSection.innerHTML = `
+        contentSection.innerHTML = `
             <h2>Tasks for ${userEmail}</h2>
             <ul id="task-list"></ul>
         `;
 
         const taskList = document.getElementById("task-list");
 
-        tasks.forEach(task => {
+        tasks.forEach((task) => {
             const li = document.createElement("li");
             li.innerHTML = `
                 <strong>${task.title}</strong> - ${task.description} 
@@ -29,7 +29,6 @@ export async function showDashboardTasks(userEmail) {
             `;
             taskList.appendChild(li);
         });
-
     } catch (err) {
         dashboardSection.innerHTML = `<p>Error loading tasks: ${err.message}</p>`;
     }
