@@ -1,4 +1,5 @@
 import {RegisterUI} from "./client/registerUI.js";
+import { showDashboardTasks } from './client/dashboard.js';
 
 window.addEventListener("DOMContentLoaded", () => {
     const loginSection = document.querySelector(".login-section");
@@ -60,9 +61,11 @@ window.addEventListener("DOMContentLoaded", () => {
         <aside>
           <img src="assets/media/logoHorizontal.svg" alt="">
         </aside>
+        <section class="content"></section>
       </main>
     `;
 
         dashboardSection.style.display = "block";
+        showDashboardTasks(username);
     }
 });
