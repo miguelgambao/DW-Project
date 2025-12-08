@@ -14,8 +14,10 @@ export async function showDashboardTasks(userEmail) {
         console.log(`Tasks received for ${userEmail}:`, tasks);
 
         contentSection.innerHTML = `
+            <div>
             <h3>Next tasks</h3>
-            <ul id="task-list"></ul>
+            <ul id="task-list" class="tasks-container"></ul>
+            <div>
         `;
 
         const taskList = document.getElementById("task-list");
@@ -23,14 +25,14 @@ export async function showDashboardTasks(userEmail) {
         tasks.forEach((task) => {
             const li = document.createElement("li");
             li.innerHTML = `
-                <strong>${task.title}</strong> 
-                <p> ${task.description} </p>
+                <h4>${task.title}</h4> 
+                <small> ${task.description} </small>
                 <div class="task-goal">
                 <div>
-                (Due: ${task.due_date}) 
+                <small class="dark-text">${task.due_date}</small>
                 </div>
                 <div>
-                (Due: ${task.due_time}) 
+                <small class="dark-text">${task.due_time}</small>
                 </div>
                 </div>
             `;

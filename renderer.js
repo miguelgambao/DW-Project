@@ -55,8 +55,6 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         dashboardSection.innerHTML = `
-      <h2>Welcome!</h2>
-      <div id="user-info">Logged in as: ${username}</div>
       <main>
         <aside>
           <img src="assets/media/logoHorizontal.svg" alt="">

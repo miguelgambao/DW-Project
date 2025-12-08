@@ -3,6 +3,7 @@
   --dark-green: #3B623F;
   --dark-green-secondary:#2D4B30;
   --light-green: #F8FAF2;
+  --light-green-secondary: #EEF2E4;
   --gray: #b6b6b6;
   --gray-secondary: #777777;
   --darker-gray:#555555;
@@ -15,6 +16,7 @@
   --font-size-button-M: 1rem;
   --font-size-h2: 2rem;
   --font-size-h3: 1.5rem;
+  --font-size-h4: 1.125rem;
 }
 
 @font-face {
@@ -40,8 +42,38 @@ h3{
   color: var(--darker-gray);
 }
 
-.task-list>li{
-  padding: 0.5rem;
+h4{
+  font-size: var(--font-size-h4);
+  font-weight: 600;
+  color: var(--black);
+  margin:0.5rem;
+}
+
+small{
+  padding: 1rem;
+  color: var(--gray-secondary);
+  font-size: var(--font-size-p-small);
+}
+
+.dark-text{
+  color: var(--black);
+}
+
+.task-goal{
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--light-green-secondary);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+}
+
+.tasks-container{
+  padding:0;
+  list-style-type: none;
+  width:100%;
+}
+.tasks-container>li{
+  padding: 0rem;
   border-radius: var(--border-radius);
   background-color: var(--white);
   color: var(--black);
@@ -64,8 +96,8 @@ h3{
 }
 
 main {
-  padding-top: 30px;
-  width: calc(100vw - 10px);
+  margin-left: clamp(150px, 30%, 300px);
+  padding: 1rem;
 }
 aside {
   position: fixed;  
@@ -104,6 +136,13 @@ aside img {
 
 ::-webkit-scrollbar-thumb:active {
   background:var(--lighter-gray);
+}
+
+.content{
+  width:100%;
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
 }
 
 .input-primary{
