@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
         showDashboard(savedUser.email);
         return;
     }
-    
+
     function isValidEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
@@ -58,7 +58,7 @@ window.addEventListener("DOMContentLoaded", () => {
       <div id="user-info">Logged in as: ${username}</div>
       <main>
         <aside>
-          <img src="media/logoHorizontal.svg" alt="">
+          <img src="assets/media/logoHorizontal.svg" alt="">
         </aside>
       </main>
     `;
