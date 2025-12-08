@@ -14,6 +14,7 @@
   --font-size-label: 0.875rem;
   --font-size-button-M: 1rem;
   --font-size-h2: 2rem;
+  --font-size-h3: 1.5rem;
 }
 
 @font-face {
@@ -33,6 +34,19 @@ html {
 body {
   margin: 0;
 }
+
+h3{
+  font-size: var(--font-size-h3);
+  color: var(--darker-gray);
+}
+
+.task-list>li{
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  color: var(--black);
+}
+
 .titleBar {
   -webkit-app-region: drag;
   display: flex;
