@@ -1,3 +1,5 @@
+import { PieChart } from './utilities/pie_chart.js';
+
 export async function showDashboardTasks(userEmail) {
     const contentSection = document.querySelector(".content");
 
@@ -17,7 +19,11 @@ export async function showDashboardTasks(userEmail) {
             <div>
             <h3>Next tasks</h3>
             <ul id="task-list" class="tasks-container"></ul>
-            <div>
+            </div>
+                            <div class="complete-tasks-section">
+                <h3>Completed tasks</h3>
+                <canvas id="tasksPieChart" class="pie-chart"></canvas>
+                </div>
         `;
 
         const taskList = document.getElementById("task-list");
@@ -37,6 +43,10 @@ export async function showDashboardTasks(userEmail) {
                 </div>
             `;
             taskList.appendChild(li);
+            const completedCount = tasks.filter(task => task.completed).length;
+             const totalCount = tasks.length;
+            PieChart('tasksPieChart', completedCount, totalCount);
+
         });
     } catch (err) {
         dashboardSection.innerHTML = `<p>Error loading tasks: ${err.message}</p>`;
