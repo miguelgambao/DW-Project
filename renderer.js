@@ -59,6 +59,9 @@ window.addEventListener("DOMContentLoaded", () => {
         <aside>
           <img src="assets/media/logoHorizontal.svg" alt="">
         </aside>
+        <div>
+        <h1>Dashboard</h1>
+        </div>
         <section class="content"></section>
       </main>
     `;
