@@ -61,6 +61,12 @@ small{
   font-size: var(--font-size-p-small);
 }
 
+.font-alert{
+  font-size: 4rem;
+  font-weight: 700;
+  margin:0.65rem;
+}
+
 .dark-text{
   color: var(--black);
 }
@@ -78,11 +84,26 @@ small{
   list-style-type: none;
   width:100%;
 }
-.tasks-container>li{
+
+.your-pomodoro-container, .pomodoro-card{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tasks-container>li, .pomodoro-card{
   padding: 0rem;
   border-radius: var(--border-radius);
   background-color: var(--white);
   color: var(--black);
+}
+
+
+.pomodoro-card{
+  padding-bottom: 2rem;
+  padding-top: 2rem;
 }
 
 .titleBar {
@@ -127,8 +148,39 @@ aside img {
   aspect-ratio: 1 / 1;
 }
 
+.tasks-table{
+  width: 100%;
+}
+
+.tasks-table th{
+  background-color: var(--dark-green);
+  color:var(--white);
+  padding: 0.65rem 1rem;
+  font-size: var(--font-size-button-M);
+  font-weight: normal;
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  text-align: left;
+}
+
+.tasks-table td{
+  background-color: var(--white);
+  color: var(--black);
+  padding: 0.65rem 1rem;
+  font-size: var(--font-size-button-M);
+  margin:0;
+}
+
+.tasks-table td:last-child{
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
 .complete-tasks-section{
   width:100%;
+  display: flex;
+  flex-direction: column;
+  gap:0.75rem;
 }
 
 
