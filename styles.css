@@ -9,6 +9,8 @@
   --darker-gray:#555555;
   --lighter-gray:#aaaaaa;
   --black: #2c2c2c;
+  --yellow-primary: #FFC107;
+  --yellow-lighter: #FFD54F;
 
   --border-radius: 8px;
   --font-size-p-small:0.75rem;
@@ -89,9 +91,11 @@ small{
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   gap: 1rem;
 }
+
+
 
 .tasks-container>li, .pomodoro-card{
   padding: 0rem;
@@ -104,6 +108,7 @@ small{
 .pomodoro-card{
   padding-bottom: 2rem;
   padding-top: 2rem;
+  align-items: center;
 }
 
 .titleBar {
@@ -211,7 +216,7 @@ aside img {
   width:100%;
   display: flex;
   justify-content: flex-start;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .input-primary{
@@ -245,8 +250,21 @@ label{
   cursor: pointer;
 }
 
+.button-secondary{
+  width:fit-content;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--yellow-primary);
+  color:var(--black);
+  cursor: pointer;
+}
+
 .button-primary:hover{
   background-color: var(--dark-green-secondary);
+}
+
+.button-secondary:hover{
+  background-color: var(--yellow-lighter);
 }
 
 .M{

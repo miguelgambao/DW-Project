@@ -36,7 +36,7 @@ export async function showDashboardTasks(userEmail) {
     <h3>Your Pomodoro</h3>
         <div class="pomodoro-card">
             <h1 class="font-alert">30:00</h1>
-            <button id="start-pomodoro-btn">Start</button>
+            <button class="button-secondary M">Start</button>
         </div>
         </div>
     `;
