@@ -48,6 +48,7 @@ h1{
 h3{
   font-size: var(--font-size-h3);
   color: var(--darker-gray);
+  font-weight: 400;
 }
 
 h4{
@@ -59,7 +60,7 @@ h4{
 }
 
 small{
-  padding: 0.65rem 1rem;
+  padding: 0.4rem;
   color: var(--gray-secondary);
   font-size: var(--font-size-p-small);
 }
@@ -94,7 +95,7 @@ small{
   justify-content: space-between;
   background-color: var(--light-green-secondary);
   border-radius: var(--border-radius);
-  padding: 1rem;
+  padding: 0.75rem 1.2rem;
 }
 
 .tasks-container{
@@ -104,7 +105,7 @@ small{
 
   display: flex;
   flex-direction: column;
-  gap:0.75rem;
+  gap:1rem;
 }
 
 .your-pomodoro-container, .pomodoro-card{
@@ -199,8 +200,11 @@ aside img {
   margin:0;
 }
 
-.tasks-table td:last-child{
+.tasks-table tr:last-child td:first-child {
   border-bottom-left-radius: var(--border-radius);
+}
+
+.tasks-table tr:last-child td:last-child {
   border-bottom-right-radius: var(--border-radius);
 }
 
@@ -208,6 +212,7 @@ aside img {
   width:100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap:0.75rem;
 }
 
