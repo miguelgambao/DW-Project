@@ -18,7 +18,7 @@ export async function showDashboardTasks(userEmail) {
     console.log(`Tasks received for ${userEmail}:`, tasks);
 
     contentSection.innerHTML = `
-        <div>
+        <div class="upcoming-tasks-section">
             <h3>Next tasks</h3>
             <ul id="task-list" class="tasks-container"></ul>
         </div>
@@ -51,8 +51,14 @@ export async function showDashboardTasks(userEmail) {
         <h4>${task.title}</h4> 
         <small>${task.description}</small>
         <div class="task-goal">
-            <div><small class="dark-text">${task.due_date}</small></div>
-            <div><small class="dark-text">${task.due_time}</small></div>
+            <div>
+            <img class="icon" src="assets/icons/calendar.svg" alt="calendar icon">
+            <small class="dark-text">${task.due_date}</small>
+            </div>
+            <div>
+            <img class="icon" src="assets/icons/alarm-clock.svg" alt="clock icon">
+            <small class="dark-text">${task.due_time}</small>
+            </div>
         </div>
       `;
 

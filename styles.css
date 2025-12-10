@@ -54,13 +54,23 @@ h4{
   font-size: var(--font-size-h4);
   font-weight: 600;
   color: var(--black);
-  margin:5rem;
+  margin:1rem;
+  margin-bottom: 0;
 }
 
 small{
-  padding: 1rem;
+  padding: 0.65rem 1rem;
   color: var(--gray-secondary);
   font-size: var(--font-size-p-small);
+}
+
+.icon{
+  width: 1.2rem;
+  height: 1.2rem;
+  padding: 0.5rem;
+  vertical-align: middle;
+  background: var(--white);
+  border-radius: 9999px;
 }
 
 .font-alert{
@@ -73,6 +83,12 @@ small{
   color: var(--black);
 }
 
+.upcoming-tasks-section{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .task-goal{
   display: flex;
   justify-content: space-between;
@@ -82,9 +98,13 @@ small{
 }
 
 .tasks-container{
+  width: 100%;
   padding:0;
   list-style-type: none;
-  width:100%;
+
+  display: flex;
+  flex-direction: column;
+  gap:0.75rem;
 }
 
 .your-pomodoro-container, .pomodoro-card{
@@ -98,6 +118,9 @@ small{
 
 
 .tasks-container>li, .pomodoro-card{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 0rem;
   border-radius: var(--border-radius);
   background-color: var(--white);
