@@ -2,6 +2,7 @@ import { RegisterUI } from "./registerUI.js";
 import { showDashboardTasks } from "./dashboard.js";
 import { showCalendar } from "./calendar.js";
 import { showTasks } from "./tasks.js";
+import { showPomodoroPage } from './pomodoro.js';
 
 const isElectron = window.api && window.api.isElectron;
 
@@ -92,11 +93,15 @@ window.addEventListener("DOMContentLoaded", () => {
             <main>
                 <aside>
                     <img src="assets/media/logoHorizontal.svg" alt="">
-                    <button class="calendar">Calendar</button>
-                    <button class="tasks">Tasks</button>
+                    <nav class="aside-nav">
+                        <button class="button-terciary M" id="dashboardBtn">Dashboard</button>
+                        <button class="button-terciary M" id="calendarBtn">Calendar</button>
+                        <button class="button-terciary M" id="tasksBtn">Tasks</button>
+                        <button class="button-terciary M" id="pomodoroBtn">Pomodoro</button>
+                    </nav>
                 </aside>
                 <div>
-                    <h1 class="general-title">Dashboard</h1>
+                    <h1 id="page-title" class="general-title">Dashboard</h1>
                 </div>
                 <section class="content"></section>
             </main>
@@ -104,16 +109,33 @@ window.addEventListener("DOMContentLoaded", () => {
 
         showDashboardTasks(username);
 
+        // Navigation handlers
         dashboardSection
-            .querySelector(".calendar")
+            .querySelector("#dashboardBtn")
             .addEventListener("click", () => {
+                document.getElementById("page-title").textContent = "Dashboard";
+                showDashboardTasks(username);
+            });
+
+        dashboardSection
+            .querySelector("#calendarBtn")
+            .addEventListener("click", () => {
+                document.getElementById("page-title").textContent = "Calendar";
                 showCalendar(username, new Date());
             });
 
         dashboardSection
-            .querySelector(".tasks")
+            .querySelector("#tasksBtn")
             .addEventListener("click", () => {
+                document.getElementById("page-title").textContent = "Tasks";
                 showTasks(username);
+            });
+
+        dashboardSection
+            .querySelector("#pomodoroBtn")
+            .addEventListener("click", () => {
+                document.getElementById("page-title").textContent = "Pomodoro";
+                showPomodoroPage();
             });
     }
 });

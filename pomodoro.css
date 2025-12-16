@@ -1,0 +1,33 @@
+.pomodoro-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 800px;
+}
+
+.pomodoro-timer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem;
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timer-display {
+  font-size: 6rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  margin: 1rem 0;
+  font-family: 'Inter', monospace;
+}
+
+.pomodoro-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+
