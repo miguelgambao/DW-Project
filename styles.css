@@ -11,6 +11,7 @@
   --black: #2c2c2c;
   --yellow-primary: #F6D47F;
   --yellow-lighter: #FFD54F;
+  --warning-red:#FF6633;
 
   --border-radius: 8px;
   --font-size-p-small:0.75rem;
@@ -63,6 +64,9 @@ small{
   padding: 0.4rem;
   color: var(--gray-secondary);
   font-size: var(--font-size-p-small);
+}
+.gray{
+  color: var(--darker-gray);
 }
 
 .icon{

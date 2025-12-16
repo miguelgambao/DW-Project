@@ -1,12 +1,10 @@
 .calendar-container {
-    max-width: 600px;
+    width: 100%;
 }
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-top: 10px;
+    grid-template-columns: 60px repeat(7, 1fr);
 }
 
 .day-name {
@@ -15,18 +13,50 @@
 }
 
 .day {
-    border: 1px solid #ccc;
+    border: 1px solid var(--light-gray);
     min-height: 60px;
     text-align: right;
     padding: 5px;
 }
 
-.day.empty {
-    border: none;
-}
 
 .day.today {
     background-color: #007bff;
     color: white;
     font-weight: bold;
+}
+
+.calendar-header{
+    color:var(--darker-gray);
+    border: 1px solid var(--light-green-secondary);
+    text-align: center;
+    padding: 0.75rem 0;
+}
+
+.calendar-header, .day-cell, .time-column{
+border: 1px solid var(--light-green-secondary);
+}
+
+.time-column{
+    border-radius: var(--border-radius);
+}
+
+.current-hour-line{
+    position: absolute;
+    left: 0; /* ignora coluna de horas */
+    right: 0;
+    height: 2px;
+    background-color: var(--warning-red);
+    z-index: 10;
+}
+.current-hour-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: red;
 }
