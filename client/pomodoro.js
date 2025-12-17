@@ -1,15 +1,43 @@
-let timerInterval = null;
-let timeRemaining = 25 * 60; // 25 minutes in seconds
-let isRunning = false;
-let currentMode = 'pomodoro'; // Current mode: 'pomodoro', 'shortBreak', 'longBreak'
-let durations = {
+// Constants
+const SECONDS_PER_MINUTE = 60;
+const MIN_DURATION = 1;
+const MAX_DURATION = 120;
+const DEFAULT_DURATIONS = {
   pomodoro: 25,
   shortBreak: 5,
   longBreak: 15
 };
+
+// State variables
+let timerInterval = null;
+let timeRemaining = DEFAULT_DURATIONS.pomodoro * SECONDS_PER_MINUTE;
+let isRunning = false;
+let currentMode = 'pomodoro';
+const durations = { ...DEFAULT_DURATIONS };
+
+// DOM element references
 let startBtn = null;
 let timerDisplay = null;
 
+// Helper functions
+function formatTime(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
+  const seconds = totalSeconds % SECONDS_PER_MINUTE;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function isValidDuration(value) {
+  const duration = parseInt(value, 10);
+  return !isNaN(duration) && duration >= MIN_DURATION && duration <= MAX_DURATION;
+}
+
+function updateButtonText(text) {
+  if (startBtn) {
+    startBtn.textContent = text;
+  }
+}
+
+// Timer functions
 function startTimer() {
   isRunning = true;
   timerInterval = setInterval(() => {
@@ -17,11 +45,15 @@ function startTimer() {
       timeRemaining--;
       updateDisplay();
     } else {
-      pauseTimer();
-      startBtn.textContent = "Start";
-      alert("Timer complete!");
+      handleTimerComplete();
     }
   }, 1000);
+}
+
+function handleTimerComplete() {
+  pauseTimer();
+  updateButtonText('Start');
+  alert('Timer complete!');
 }
 
 function pauseTimer() {
@@ -31,39 +63,118 @@ function pauseTimer() {
 
 function resetTimer() {
   pauseTimer();
-  timeRemaining = durations[currentMode] * 60;
+  timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
   updateDisplay();
 }
 
 function switchMode(mode) {
   if (isRunning) {
-    alert("Please stop the timer before switching modes.");
+    alert('Please stop the timer before switching modes.');
     return;
   }
   currentMode = mode;
-  timeRemaining = durations[currentMode] * 60;
+  timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
   updateDisplay();
 }
 
 function updateDisplay() {
-  const minutes = Math.floor(timeRemaining / 60);
-  const seconds = timeRemaining % 60;
-  timerDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  if (timerDisplay) {
+    timerDisplay.textContent = formatTime(timeRemaining);
+  }
 }
 
-export function showPomodoroPage() {
-  const contentSection = document.querySelector(".content");
+// Event handlers
+function handleStartClick() {
+  if (isRunning) {
+    pauseTimer();
+    updateButtonText('Resume');
+  } else {
+    startTimer();
+    updateButtonText('Pause');
+  }
+}
 
-  if (!contentSection) {
-    console.error("Content section not found");
+function handleResetClick() {
+  resetTimer();
+  updateButtonText('Start');
+}
+
+function handleModeClick(btn, modeBtns) {
+  const mode = btn.dataset.mode;
+  switchMode(mode);
+  
+  modeBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateButtonText('Start');
+}
+
+function handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput) {
+  const pomodoroMin = parseInt(pomodoroInput.value, 10);
+  const shortBreakMin = parseInt(shortBreakInput.value, 10);
+  const longBreakMin = parseInt(longBreakInput.value, 10);
+
+  if (!isValidDuration(pomodoroMin) || !isValidDuration(shortBreakMin) || !isValidDuration(longBreakMin)) {
+    alert(`Please enter values between ${MIN_DURATION} and ${MAX_DURATION} minutes.`);
     return;
   }
 
-  // Reset timer state when showing page
+  durations.pomodoro = pomodoroMin;
+  durations.shortBreak = shortBreakMin;
+  durations.longBreak = longBreakMin;
+
+  if (!isRunning) {
+    timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
+    updateDisplay();
+  }
+
+  alert('Settings saved!');
+}
+
+// DOM initialization
+function initializeEventListeners(elements) {
+  const { startBtn, resetBtn, modeBtns, pomodoroInput, shortBreakInput, longBreakInput, saveSettingsBtn } = elements;
+
+  startBtn.addEventListener('click', handleStartClick);
+  resetBtn.addEventListener('click', handleResetClick);
+  
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => handleModeClick(btn, modeBtns));
+  });
+
+  saveSettingsBtn.addEventListener('click', () => {
+    handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput);
+  });
+}
+
+function getDOMElements() {
+  return {
+    startBtn: document.getElementById('startBtn'),
+    resetBtn: document.getElementById('resetBtn'),
+    timerDisplay: document.getElementById('timerDisplay'),
+    modeBtns: document.querySelectorAll('.mode-btn'),
+    pomodoroInput: document.getElementById('pomodoroInput'),
+    shortBreakInput: document.getElementById('shortBreakInput'),
+    longBreakInput: document.getElementById('longBreakInput'),
+    saveSettingsBtn: document.getElementById('saveSettingsBtn')
+  };
+}
+
+function resetTimerState() {
   clearInterval(timerInterval);
   currentMode = 'pomodoro';
-  timeRemaining = durations[currentMode] * 60;
+  timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
   isRunning = false;
+}
+
+export function showPomodoroPage() {
+  const contentSection = document.querySelector('.content');
+
+  if (!contentSection) {
+    console.error('Content section not found');
+    return;
+  }
+
+  resetTimerState();
 
   contentSection.innerHTML = `
     <div class="pomodoro-page">
@@ -84,15 +195,15 @@ export function showPomodoroPage() {
         <div class="settings-grid">
           <div class="time-selector">
             <label for="pomodoroInput">Pomodoro (minutes):</label>
-            <input type="number" id="pomodoroInput" min="1" max="120" value="25" />
+            <input type="number" id="pomodoroInput" min="${MIN_DURATION}" max="${MAX_DURATION}" value="${durations.pomodoro}" />
           </div>
           <div class="time-selector">
             <label for="shortBreakInput">Short Break (minutes):</label>
-            <input type="number" id="shortBreakInput" min="1" max="120" value="5" />
+            <input type="number" id="shortBreakInput" min="${MIN_DURATION}" max="${MAX_DURATION}" value="${durations.shortBreak}" />
           </div>
           <div class="time-selector">
             <label for="longBreakInput">Long Break (minutes):</label>
-            <input type="number" id="longBreakInput" min="1" max="120" value="15" />
+            <input type="number" id="longBreakInput" min="${MIN_DURATION}" max="${MAX_DURATION}" value="${durations.longBreak}" />
           </div>
         </div>
         <button class="button-secondary M" id="saveSettingsBtn">Save Settings</button>
@@ -100,62 +211,12 @@ export function showPomodoroPage() {
     </div>
   `;
 
-  startBtn = document.getElementById("startBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  timerDisplay = document.getElementById("timerDisplay");
-  const modeBtns = document.querySelectorAll(".mode-btn");
-  const pomodoroInput = document.getElementById("pomodoroInput");
-  const shortBreakInput = document.getElementById("shortBreakInput");
-  const longBreakInput = document.getElementById("longBreakInput");
-  const saveSettingsBtn = document.getElementById("saveSettingsBtn");
-
-  startBtn.addEventListener("click", () => {
-    if (isRunning) {
-      pauseTimer();
-      startBtn.textContent = "Resume";
-    } else {
-      startTimer();
-      startBtn.textContent = "Pause";
-    }
-  });
-
-  resetBtn.addEventListener("click", () => {
-    resetTimer();
-    startBtn.textContent = "Start";
-  });
-
-  modeBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const mode = btn.dataset.mode;
-      switchMode(mode);
-      
-      modeBtns.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      startBtn.textContent = "Start";
-    });
-  });
-
-  saveSettingsBtn.addEventListener("click", () => {
-    const pomodoroMin = parseInt(pomodoroInput.value);
-    const shortBreakMin = parseInt(shortBreakInput.value);
-    const longBreakMin = parseInt(longBreakInput.value);
-
-    if (pomodoroMin < 1 || pomodoroMin > 120 || 
-        shortBreakMin < 1 || shortBreakMin > 120 || 
-        longBreakMin < 1 || longBreakMin > 120) {
-      alert("Please enter values between 1 and 120 minutes.");
-      return;
-    }
-
-    durations.pomodoro = pomodoroMin;
-    durations.shortBreak = shortBreakMin;
-    durations.longBreak = longBreakMin;
-
-    if (!isRunning) {
-      timeRemaining = durations[currentMode] * 60;
-      updateDisplay();
-    }
-
-    alert("Settings saved!");
-  });
+  const elements = getDOMElements();
+  
+  // Assign to module-level variables
+  startBtn = elements.startBtn;
+  timerDisplay = elements.timerDisplay;
+  
+  // Initialize event listeners
+  initializeEventListeners(elements);
 }
