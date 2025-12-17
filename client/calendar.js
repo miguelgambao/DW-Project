@@ -21,6 +21,8 @@ export function showCalendar(username, referenceDate = new Date()) {
         "December",
     ];
 
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
     const startOfWeek = new Date(referenceDate);
     startOfWeek.setDate(referenceDate.getDate() - referenceDate.getDay());
 
@@ -41,20 +43,33 @@ export function showCalendar(username, referenceDate = new Date()) {
     contentSection.innerHTML = `
         <div class="calendar-container">
             <div class="calendar-options">
-                <button class="button-secondary M">Today</button>
-                <div>
+                <button class="button-secondary M" id="today-btn">Today</button>
+
+                <div class="week-navigation">
                     <button class="button-secondary M" id="prev-week">&lt;</button>
                     <p class="gray">${weekHeader}</p>
                     <button class="button-secondary M" id="next-week">&gt;</button>
                 </div>
+
                 <button class="button-secondary M">+</button>
             </div>
 
             <div class="calendar-grid weekly-grid" style="position: relative;">
                 <div class="time-column header"></div>
-                ${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-                .map((day) => `<div class="calendar-header">${day}</div>`)
+
+                ${dayNames
+                .map((day, index) => {
+                    const date = new Date(startOfWeek);
+                    date.setDate(startOfWeek.getDate() + index);
+                    return `
+                        <div class="calendar-header">
+                            <div>${day}</div>
+                            <div class="day-number">${date.getDate()}</div>
+                        </div>
+                    `;
+                })
                 .join("")}
+
                 ${Array.from({length: 24})
                 .map(
                     (_, hour) => `
@@ -77,17 +92,29 @@ export function showCalendar(username, referenceDate = new Date()) {
 
     function updateCurrentHourLine() {
         const now = new Date();
-        const hourHeaders = calendarGrid.querySelectorAll(".calendar-header");
-        const hourColumnHeaders = Array.from(hourHeaders).slice(7);
 
+        document.querySelectorAll(".current-hour-line").forEach((el) => el.remove());
+
+        if (now < startOfWeek || now > endOfWeek) return;
+
+        const currentDayIndex = now.getDay();
         const hour = now.getHours();
         const minutes = now.getMinutes();
 
-        const hourCell = hourColumnHeaders[hour];
+        const dayCells = Array.from(calendarGrid.querySelectorAll(".day-cell")).filter(
+            (_, index) => index % 7 === currentDayIndex
+        );
+
+        const hourCell = dayCells[hour];
         if (!hourCell) return;
 
-        const y = hourCell.offsetTop + (minutes / 60) * hourCell.offsetHeight;
-        currentHourLine.style.top = `${y}px`;
+        hourCell.style.position = "relative";
+
+        const line = document.createElement("div");
+        line.className = "current-hour-line";
+        line.style.top = `${(minutes / 60) * hourCell.offsetHeight}px`;
+
+        hourCell.appendChild(line);
     }
 
     updateCurrentHourLine();
@@ -103,5 +130,9 @@ export function showCalendar(username, referenceDate = new Date()) {
         const nextWeek = new Date(startOfWeek);
         nextWeek.setDate(startOfWeek.getDate() + 7);
         showCalendar(username, nextWeek);
+
+        document.getElementById("today-btn").addEventListener("click", () => {
+            showCalendar(username, new Date());
+        });
     });
 }
