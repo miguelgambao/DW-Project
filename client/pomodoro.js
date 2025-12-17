@@ -14,6 +14,8 @@ let timeRemaining = DEFAULT_DURATIONS.pomodoro * SECONDS_PER_MINUTE;
 let isRunning = false;
 let currentMode = 'pomodoro';
 const durations = { ...DEFAULT_DURATIONS };
+let pomodoroCount = 0; // Track completed pomodoros
+let longBreakInterval = 3; // Number of short breaks before long break
 
 // DOM element references
 let startBtn = null;
@@ -31,6 +33,11 @@ function isValidDuration(value) {
   return !isNaN(duration) && duration >= MIN_DURATION && duration <= MAX_DURATION;
 }
 
+function isValidInterval(value) {
+  const interval = parseInt(value, 10);
+  return !isNaN(interval) && interval >= 1 && interval <= 10;
+}
+
 function updateButtonText(text) {
   if (startBtn) {
     startBtn.textContent = text;
@@ -40,6 +47,7 @@ function updateButtonText(text) {
 // Timer functions
 function startTimer() {
   isRunning = true;
+  updateDashboardWidget();
   timerInterval = setInterval(() => {
     if (timeRemaining > 0) {
       timeRemaining--;
@@ -53,12 +61,42 @@ function startTimer() {
 function handleTimerComplete() {
   pauseTimer();
   updateButtonText('Start');
-  alert('Timer complete!');
+  
+  if (currentMode === 'pomodoro') {
+    pomodoroCount++;
+    
+    // Check if it's time for a long break
+    if (pomodoroCount % longBreakInterval === 0) {
+      alert(`Pomodoro complete! Time for a long break.`);
+      currentMode = 'longBreak';
+    } else {
+      alert(`Pomodoro complete! Starting short break ${pomodoroCount} of ${longBreakInterval}.`);
+      currentMode = 'shortBreak';
+    }
+    
+    timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
+    updateDisplay();
+    updateActiveModeButton();
+  } else if (currentMode === 'shortBreak') {
+    alert('Short break complete! Ready for another pomodoro.');
+    currentMode = 'pomodoro';
+    timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
+    updateDisplay();
+    updateActiveModeButton();
+  } else if (currentMode === 'longBreak') {
+    alert('Long break complete! Starting fresh cycle.');
+    pomodoroCount = 0; // Reset counter after long break
+    currentMode = 'pomodoro';
+    timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
+    updateDisplay();
+    updateActiveModeButton();
+  }
 }
 
 function pauseTimer() {
   isRunning = false;
   clearInterval(timerInterval);
+  updateDashboardWidget();
 }
 
 function resetTimer() {
@@ -81,6 +119,31 @@ function updateDisplay() {
   if (timerDisplay) {
     timerDisplay.textContent = formatTime(timeRemaining);
   }
+  updateDashboardWidget();
+}
+
+function updateDashboardWidget() {
+  const dashboardTimer = document.getElementById('dashboardTimerDisplay');
+  const dashboardBtn = document.getElementById('dashboardTimerBtn');
+  
+  if (dashboardTimer) {
+    dashboardTimer.textContent = formatTime(timeRemaining);
+  }
+  
+  if (dashboardBtn) {
+    dashboardBtn.textContent = isRunning ? 'Pause' : 'Start';
+  }
+}
+
+function updateActiveModeButton() {
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  modeBtns.forEach(btn => {
+    if (btn.dataset.mode === currentMode) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
 }
 
 // Event handlers
@@ -108,19 +171,26 @@ function handleModeClick(btn, modeBtns) {
   updateButtonText('Start');
 }
 
-function handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput) {
+function handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput, longBreakIntervalInput) {
   const pomodoroMin = parseInt(pomodoroInput.value, 10);
   const shortBreakMin = parseInt(shortBreakInput.value, 10);
   const longBreakMin = parseInt(longBreakInput.value, 10);
+  const intervalValue = parseInt(longBreakIntervalInput.value, 10);
 
   if (!isValidDuration(pomodoroMin) || !isValidDuration(shortBreakMin) || !isValidDuration(longBreakMin)) {
-    alert(`Please enter values between ${MIN_DURATION} and ${MAX_DURATION} minutes.`);
+    alert(`Please enter duration values between ${MIN_DURATION} and ${MAX_DURATION} minutes.`);
+    return;
+  }
+
+  if (!isValidInterval(intervalValue)) {
+    alert('Please enter between 1 and 10 short breaks before a long break.');
     return;
   }
 
   durations.pomodoro = pomodoroMin;
   durations.shortBreak = shortBreakMin;
   durations.longBreak = longBreakMin;
+  longBreakInterval = intervalValue;
 
   if (!isRunning) {
     timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
@@ -132,7 +202,7 @@ function handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput) {
 
 // DOM initialization
 function initializeEventListeners(elements) {
-  const { startBtn, resetBtn, modeBtns, pomodoroInput, shortBreakInput, longBreakInput, saveSettingsBtn } = elements;
+  const { startBtn, resetBtn, modeBtns, pomodoroInput, shortBreakInput, longBreakInput, longBreakIntervalInput, saveSettingsBtn } = elements;
 
   startBtn.addEventListener('click', handleStartClick);
   resetBtn.addEventListener('click', handleResetClick);
@@ -142,7 +212,7 @@ function initializeEventListeners(elements) {
   });
 
   saveSettingsBtn.addEventListener('click', () => {
-    handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput);
+    handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput, longBreakIntervalInput);
   });
 }
 
@@ -155,6 +225,7 @@ function getDOMElements() {
     pomodoroInput: document.getElementById('pomodoroInput'),
     shortBreakInput: document.getElementById('shortBreakInput'),
     longBreakInput: document.getElementById('longBreakInput'),
+    longBreakIntervalInput: document.getElementById('longBreakIntervalInput'),
     saveSettingsBtn: document.getElementById('saveSettingsBtn')
   };
 }
@@ -164,6 +235,25 @@ function resetTimerState() {
   currentMode = 'pomodoro';
   timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
   isRunning = false;
+  pomodoroCount = 0;
+}
+
+export function getTimerState() {
+  return {
+    timeRemaining,
+    isRunning,
+    currentMode,
+    formattedTime: formatTime(timeRemaining)
+  };
+}
+
+export function toggleTimer() {
+  if (isRunning) {
+    pauseTimer();
+  } else {
+    startTimer();
+  }
+  updateDashboardWidget();
 }
 
 export function showPomodoroPage() {
@@ -174,13 +264,11 @@ export function showPomodoroPage() {
     return;
   }
 
-  resetTimerState();
-
   contentSection.innerHTML = `
     <div class="pomodoro-page">
       <div class="pomodoro-timer-card">
         <div class="mode-selector">
-          <button class="mode-btn active" id="pomodoroBtn" data-mode="pomodoro">Pomodoro</button>
+          <button class="mode-btn active" id="pomodoroBtn" data-mode="pomodoro">Work</button>
           <button class="mode-btn" id="shortBreakBtn" data-mode="shortBreak">Short Break</button>
           <button class="mode-btn" id="longBreakBtn" data-mode="longBreak">Long Break</button>
         </div>
@@ -194,7 +282,7 @@ export function showPomodoroPage() {
         <h3>Settings</h3>
         <div class="settings-grid">
           <div class="time-selector">
-            <label for="pomodoroInput">Pomodoro (minutes):</label>
+            <label for="pomodoroInput">Work (minutes):</label>
             <input type="number" id="pomodoroInput" min="${MIN_DURATION}" max="${MAX_DURATION}" value="${durations.pomodoro}" />
           </div>
           <div class="time-selector">
@@ -204,6 +292,10 @@ export function showPomodoroPage() {
           <div class="time-selector">
             <label for="longBreakInput">Long Break (minutes):</label>
             <input type="number" id="longBreakInput" min="${MIN_DURATION}" max="${MAX_DURATION}" value="${durations.longBreak}" />
+          </div>
+          <div class="time-selector">
+            <label for="longBreakIntervalInput">Short Breaks before Long Break:</label>
+            <input type="number" id="longBreakIntervalInput" min="1" max="10" value="${longBreakInterval}" />
           </div>
         </div>
         <button class="button-secondary M" id="saveSettingsBtn">Save Settings</button>
@@ -219,4 +311,9 @@ export function showPomodoroPage() {
   
   // Initialize event listeners
   initializeEventListeners(elements);
+  
+  // Update display with current state
+  updateDisplay();
+  updateActiveModeButton();
+  updateButtonText(isRunning ? 'Pause' : 'Start');
 }
