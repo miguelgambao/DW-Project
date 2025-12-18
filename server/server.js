@@ -37,6 +37,54 @@ async function startServer() {
                 return;
             }
 
+            if (req.method === "GET" && req.url.startsWith("/calendar-events")) {
+                const urlObj = new URL(req.url, `http://${req.headers.host}`);
+                const userEmail = urlObj.searchParams.get("user_email");
+                const weekStart = urlObj.searchParams.get("week_start");
+                const weekEnd = urlObj.searchParams.get("week_end");
+
+                if (!userEmail || !weekStart || !weekEnd) {
+                    res.writeHead(400, {"Content-Type": "application/json"});
+                    res.end(JSON.stringify({error: "Missing parameters"}));
+                    return;
+                }
+
+                const events = await db
+                .collection("events")
+                .find({
+                    user_email: userEmail,
+                    $expr: {
+                        $or: [
+                            {
+                                $and: [
+                                    {$gte: [{$toDate: "$start_time"}, new Date(weekStart)]},
+                                    {$lte: [{$toDate: "$start_time"}, new Date(weekEnd)]},
+                                ],
+                            },
+                            {
+                                $and: [
+                                    {$gte: [{$toDate: "$end_time"}, new Date(weekStart)]},
+                                    {$lte: [{$toDate: "$end_time"}, new Date(weekEnd)]},
+                                ],
+                            },
+                            {
+                                $and: [
+                                    {$lte: [{$toDate: "$start_time"}, new Date(weekStart)]},
+                                    {$gte: [{$toDate: "$end_time"}, new Date(weekEnd)]},
+                                ],
+                            },
+                        ],
+                    },
+                })
+                .toArray();
+
+                console.log(`Calendar events for ${userEmail} (${weekStart} → ${weekEnd}):`, events);
+
+                res.writeHead(200, {"Content-Type": "application/json"});
+                res.end(JSON.stringify(events));
+                return;
+            }
+
             res.writeHead(404, {"Content-Type": "text/plain"});
             res.end("Not found");
         } catch (err) {
