@@ -1,5 +1,6 @@
 import {RegisterUI} from "./client/registerUI.js";
 import { showDashboardTasks } from './client/dashboard.js';
+import { api } from './client/api.js';
 
 window.addEventListener("DOMContentLoaded", () => {
     const loginSection = document.querySelector(".login-section");
@@ -25,7 +26,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         if (registerUI.isRegisterMode()) {
-            const userId = await window.api.createUser(email, password);
+            const userId = await api.createUser(email, password);
             if (userId) {
                 alert("Account created!");
                 registerUI.setLoginMode();
@@ -35,7 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const userId = await window.api.loginUser(email, password);
+        const userId = await api.loginUser(email, password);
         if (userId) {
             localStorage.setItem("loggedInUser", JSON.stringify({ email, userId }));
             showDashboard(email);
