@@ -71,7 +71,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             const calendarButton = dashboardSection.querySelector(".calendar");
             calendarButton.addEventListener("click", () => {
-            showCalendar(username);
+            showCalendar(username,new Date());
     });
     }
 });

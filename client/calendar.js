@@ -1,10 +1,22 @@
+import { loadWeekEvents } from "./utilities/loadWeekEvents.js";
+
 export function showCalendar(username, referenceDate = new Date()) {
     const contentSection = document.querySelector("section.content");
-
     if (!contentSection) {
         console.error("Content section not found");
         return;
     }
+
+    const { weekStart, weekEnd } = getWeekRange(referenceDate);
+
+    loadWeekEvents(username, weekStart, weekEnd);
+
+    console.log("📆 Calendar load:", {
+        user: username,
+        weekStart,
+        weekEnd
+    });
+        console.log("📅 referenceDate:", referenceDate);
 
     const monthNames = [
         "January",
@@ -135,4 +147,19 @@ export function showCalendar(username, referenceDate = new Date()) {
             showCalendar(username, new Date());
         });
     });
+}
+
+function getWeekRange(referenceDate) {
+    const start = new Date(referenceDate);
+    start.setDate(start.getDate() - start.getDay());
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+
+    return {
+        weekStart: start.toISOString(),
+        weekEnd: end.toISOString()
+    };
 }
