@@ -8,9 +8,6 @@ export function showCalendar(username, referenceDate = new Date()) {
     }
 
     const { weekStart, weekEnd } = getWeekRange(referenceDate);
-
-    loadWeekEvents(username, weekStart, weekEnd);
-
     console.log("📆 Calendar load:", {
         user: username,
         weekStart,
@@ -147,6 +144,11 @@ export function showCalendar(username, referenceDate = new Date()) {
             showCalendar(username, new Date());
         });
     });
+
+
+    loadWeekEvents(username, weekStart, weekEnd).then(events => {
+    renderWeekEvents(events, new Date(weekStart), calendarGrid);
+});
 }
 
 function getWeekRange(referenceDate) {
@@ -163,3 +165,50 @@ function getWeekRange(referenceDate) {
         weekEnd: end.toISOString()
     };
 }
+
+const renderWeekEvents = (events, weekStart, calendarGrid) => {
+    const cells = calendarGrid.querySelectorAll(".day-cell");
+
+    events.forEach(event => {
+        const {
+            title,
+            description,
+            start_time,
+            end_time,
+        } = event;
+
+        const start = new Date(start_time);
+        const end = new Date(end_time);
+
+        const dayIndex = start.getDay(); // 0 (Sun) → 6 (Sat)
+        const hour = start.getHours();
+        const minutes = start.getMinutes();
+
+        const cellIndex = hour * 7 + dayIndex;
+        const cell = cells[cellIndex];
+        if (!cell) return;
+
+        const durationHours = (end - start) / 36e5;
+
+        const eventEl = document.createElement("div");
+        eventEl.className = "calendar-event";
+
+        eventEl.innerHTML = `
+            <div class="event-title">${title}</div>
+            <div class="event-description">${description || ""}</div>
+            <div class="event-time">
+                ${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} –
+                ${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </div>
+        `;
+
+        Object.assign(eventEl.style, {
+            position: "absolute",
+            top: `${(minutes / 60) * 100}%`,
+            height: `${durationHours * 100}%`,
+        });
+
+        cell.style.position = "relative";
+        cell.appendChild(eventEl);
+    });
+};
