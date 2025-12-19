@@ -2,18 +2,24 @@ import { loadWeekEvents } from "./utilities/loadWeekEvents.js";
 
 export function showCalendar(username, referenceDate = new Date()) {
     const contentSection = document.querySelector("section.content");
+    const title = document.querySelector(".general-title");
+
+    if (title) {
+        title.textContent = "Calendar";
+    }
+    
     if (!contentSection) {
         console.error("Content section not found");
         return;
     }
 
     const { weekStart, weekEnd } = getWeekRange(referenceDate);
-    console.log("📆 Calendar load:", {
+    console.log("Calendar load:", {
         user: username,
         weekStart,
         weekEnd
     });
-        console.log("📅 referenceDate:", referenceDate);
+        console.log("referenceDate:", referenceDate);
 
     const monthNames = [
         "January",
@@ -169,36 +175,44 @@ function getWeekRange(referenceDate) {
 const renderWeekEvents = (events, weekStart, calendarGrid) => {
     const cells = calendarGrid.querySelectorAll(".day-cell");
 
-    events.forEach(event => {
-        const {
-            title,
-            description,
-            start_time,
-            end_time,
-        } = event;
+   events.forEach(event => {
+    const { title, description, start_time, end_time } = event;
 
-        const start = new Date(start_time);
-        const end = new Date(end_time);
+    const eventStart = new Date(start_time);
+    const eventEnd = new Date(end_time);
 
-        const dayIndex = start.getDay(); // 0 (Sun) → 6 (Sat)
-        const hour = start.getHours();
-        const minutes = start.getMinutes();
+    const parts = splitEventByDay(eventStart, eventEnd);
+
+    parts.forEach((part, index) => {
+        const dayIndex = part.start.getDay();
+        const hour = part.start.getHours();
+        const minutes = part.start.getMinutes();
 
         const cellIndex = hour * 7 + dayIndex;
         const cell = cells[cellIndex];
         if (!cell) return;
 
-        const durationHours = (end - start) / 36e5;
+        const durationHours = (part.end - part.start) / 36e5;
 
         const eventEl = document.createElement("div");
         eventEl.className = "calendar-event";
 
+        // Classes para eventos continuados
+        if (parts.length > 1) {
+            if (index === 0) eventEl.classList.add("event-start");
+            else if (index === parts.length - 1) eventEl.classList.add("event-end");
+            else eventEl.classList.add("event-middle");
+        }
+
         eventEl.innerHTML = `
-            <div class="event-title">${title}</div>
-            <div class="event-description">${description || ""}</div>
-            <div class="event-time">
-                ${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} –
-                ${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        <div>
+            <small class="dark-text event-text">${title}</small>
+            <div>
+            <div>
+            <small>
+                ${part.start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} –
+                ${part.end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </small>
             </div>
         `;
 
@@ -211,4 +225,28 @@ const renderWeekEvents = (events, weekStart, calendarGrid) => {
         cell.style.position = "relative";
         cell.appendChild(eventEl);
     });
+});
+
+};
+
+const splitEventByDay = (start, end) => {
+    const parts = [];
+    let current = new Date(start);
+
+    while (current < end) {
+        const dayStart = new Date(current);
+        dayStart.setHours(0, 0, 0, 0);
+
+        const dayEnd = new Date(dayStart);
+        dayEnd.setDate(dayEnd.getDate() + 1);
+
+        const partStart = new Date(Math.max(current, dayStart));
+        const partEnd = new Date(Math.min(end, dayEnd));
+
+        parts.push({ start: partStart, end: partEnd });
+
+        current = dayEnd;
+    }
+
+    return parts;
 };
