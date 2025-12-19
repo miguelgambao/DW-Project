@@ -44,6 +44,15 @@ function updateButtonText(text) {
   }
 }
 
+function getModeLabel(mode) {
+  const labels = {
+    pomodoro: 'Work Session',
+    shortBreak: 'Short Break',
+    longBreak: 'Long Break'
+  };
+  return labels[mode] || 'Work Session';
+}
+
 // Timer functions
 function startTimer() {
   isRunning = true;
@@ -105,6 +114,11 @@ function resetTimer() {
   updateDisplay();
 }
 
+export function resetTimerFromDashboard() {
+  resetTimer();
+  updateDashboardWidget();
+}
+
 function switchMode(mode) {
   if (isRunning) {
     alert('Please stop the timer before switching modes.');
@@ -125,6 +139,7 @@ function updateDisplay() {
 function updateDashboardWidget() {
   const dashboardTimer = document.getElementById('dashboardTimerDisplay');
   const dashboardBtn = document.getElementById('dashboardTimerBtn');
+  const dashboardMode = document.getElementById('dashboardModeLabel');
   
   if (dashboardTimer) {
     dashboardTimer.textContent = formatTime(timeRemaining);
@@ -132,6 +147,10 @@ function updateDashboardWidget() {
   
   if (dashboardBtn) {
     dashboardBtn.textContent = isRunning ? 'Pause' : 'Start';
+  }
+  
+  if (dashboardMode) {
+    dashboardMode.textContent = getModeLabel(currentMode);
   }
 }
 
@@ -243,7 +262,8 @@ export function getTimerState() {
     timeRemaining,
     isRunning,
     currentMode,
-    formattedTime: formatTime(timeRemaining)
+    formattedTime: formatTime(timeRemaining),
+    modeLabel: getModeLabel(currentMode)
   };
 }
 
