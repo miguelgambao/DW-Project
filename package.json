@@ -1,6 +1,9 @@
 {
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "start:electron": "electron main.js",
+    "start:web": "node server/server.js & npx http-server -p 8080 -c-1",
+    "server": "node server/server.js"
   },
   "dependencies": {
     "electron": "^33.4.11",

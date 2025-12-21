@@ -76,6 +76,6 @@ export async function showDashboardTasks(userEmail) {
     PieChart("tasksPieChart", completedCount, totalCount);
 
   } catch (err) {
-    dashboardSection.innerHTML = `<p>Error loading tasks: ${err.message}</p>`;
+    contentSection.innerHTML = `<p>Error loading tasks: ${err.message}</p>`;
   }
 }

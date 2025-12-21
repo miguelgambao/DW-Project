@@ -79,21 +79,38 @@ By default the server connects to `mongodb://localhost:27017` and uses the `pomo
 
 ## Run
 
-- Start the HTTP server (API):
+The application can run in two modes: **Electron (Desktop)** or **Web Browser**.
+
+### Prerequisites for Both Modes
+
+Make sure the HTTP server (API) is running first:
 
 ```bash
+npm run server
+# or
 node server/server.js
 ```
 
-The server listens on `http://localhost:3000` (see `server/server.js`).
+The server listens on `http://localhost:3000`.
 
-- Start the Electron app (desktop UI):
+### Electron Mode (Desktop App)
 
 ```bash
 npm start
+# or
+npm run start:electron
 ```
 
-Note: `npm start` runs `electron main.js` (see `package.json`).
+This launches the Electron desktop application.
+
+### Web Browser Mode
+
+2. Open your browser and navigate to:
+```
+http://localhost:8080
+```
+
+**Note:** In web mode, the app communicates with the backend via HTTP requests to `http://localhost:3000`. In Electron mode, it uses IPC (Inter-Process Communication) for better performance.
 
 ## API
 

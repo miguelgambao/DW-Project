@@ -36,4 +36,7 @@ async function createWindow() {
     });
 }
 
-createWindow();
+if (typeof app !== 'undefined') {
+    createWindow();
+}
+
