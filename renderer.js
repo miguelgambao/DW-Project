@@ -62,7 +62,7 @@ window.addEventListener("DOMContentLoaded", () => {
           <button class="calendar">Calendar</button>
         </aside>
         <div>
-        <h1>Dashboard</h1>
+        <h1 class="general-title">Dashboard</h1>
         </div>
         <section class="content"></section>
       </main>

@@ -262,6 +262,23 @@ aside img {
   color: var(--black);
 }
 
+.input-secondary{
+    width:100%;
+  padding: 0.5rem;
+  margin: 0.2rem;
+  box-sizing: border-box;
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  color: var(--black);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.fill-container{
+    width:100%;
+}
 .input-container{
   padding-bottom: 1rem;
   display: flex;
@@ -300,6 +317,13 @@ label{
 }
 
 .M{
+  padding: 0.5rem 1rem;
+  margin: 0.2rem;
+  font-size: var(--font-size-button-M);
+}
+
+.Smaller{
+  width:fit-content;
   padding: 0.5rem 1rem;
   margin: 0.2rem;
   font-size: var(--font-size-button-M);

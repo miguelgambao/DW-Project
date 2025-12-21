@@ -1,4 +1,6 @@
 import { loadWeekEvents } from "./utilities/loadWeekEvents.js";
+import { Modal } from "./utilities/modal.js";
+
 
 export function showCalendar(username, referenceDate = new Date()) {
     const contentSection = document.querySelector("section.content");
@@ -7,7 +9,7 @@ export function showCalendar(username, referenceDate = new Date()) {
     if (title) {
         title.textContent = "Calendar";
     }
-    
+
     if (!contentSection) {
         console.error("Content section not found");
         return;
@@ -66,7 +68,7 @@ export function showCalendar(username, referenceDate = new Date()) {
                     <button class="button-secondary M" id="next-week">&gt;</button>
                 </div>
 
-                <button class="button-secondary M">+</button>
+                <button class="button-secondary M" id="add-event">+</button>
             </div>
 
             <div class="calendar-grid weekly-grid" style="position: relative;">
@@ -150,6 +152,48 @@ export function showCalendar(username, referenceDate = new Date()) {
             showCalendar(username, new Date());
         });
     });
+
+
+    document.getElementById("add-event").addEventListener("click", () => {
+    Modal({
+        title: "New Event",
+        content: `
+        <div class="modal-form-group">
+            <div>
+                <label>Title</label>
+                <input type="text" class="input-primary fill-container" />
+            </div>
+
+            <div>
+                <label>Description</label>
+                <input type="text" class="input-primary fill-container" />
+            </div>
+
+            <div class="datetime-container">
+                <div class="datetime-input">
+                    <label>Start</label>
+                    <input type="datetime-local" class="input-secondary" />
+                </div>
+
+                <div class="datetime-input">
+                    <label>End</label>
+                    <input type="datetime-local" class="input-secondary" />
+                </div>
+            </div>
+            
+                 <div class="all-day-container">
+                <label>
+                    <input type="checkbox" class="checkbox" />
+                    All day
+                </label>
+                </div>
+            <button class="button-primary Smaller">
+                Save
+            </button>
+            </div>
+        `,
+    });
+});
 
 
     loadWeekEvents(username, weekStart, weekEnd).then(events => {
