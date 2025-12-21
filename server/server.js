@@ -6,7 +6,6 @@ const path = require("path");
 const url = "mongodb://localhost:27017";
 const dbName = "pomodoro_app";
 
-// --- Helpers ---
 function parseBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
@@ -40,7 +39,6 @@ async function startServer() {
   const STATIC_ASSETS_DIR = path.join(__dirname, '..', 'assets');
 
   const server = http.createServer(async (req, res) => {
-    // --- CORS ---
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -54,7 +52,6 @@ async function startServer() {
     try {
       const { method, url: reqUrl, headers } = req;
 
-      // --- API ROUTES ---
       if (method === "POST" && reqUrl === "/api/login") {
         const { email, password } = await parseBody(req);
         const user = await db.collection("users").findOne({
@@ -135,7 +132,6 @@ async function startServer() {
         return;
       }
 
-      // --- STATIC FILES ---
       let filePath = null;
 
       if (reqUrl === '/' || reqUrl.startsWith('/index.html')) {
@@ -153,7 +149,6 @@ async function startServer() {
         return;
       }
 
-      // --- 404 ---
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('Not found');
 
