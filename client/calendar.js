@@ -196,13 +196,42 @@ export function showCalendar(username, referenceDate = new Date()) {
     });
 
     setTimeout(() => {
-    document.getElementById("save-event").addEventListener("click", async () => {
+    const saveBtn = document.getElementById("save-event");
+    const allDayCheckbox = document.getElementById("event-all-day");
+    const startInput = document.getElementById("event-start");
+    const endInput = document.getElementById("event-end");
+
+    allDayCheckbox.addEventListener("change", () => {
+        if (allDayCheckbox.checked) {
+            let startDate = startInput.value ? new Date(startInput.value) : new Date();
+            let endDate = endInput.value ? new Date(endInput.value) : new Date();
+
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 0, 0);
+
+            const formatDateTime = (date) => {
+                const pad = (n) => n.toString().padStart(2, "0");
+                return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+            }
+
+            startInput.value = formatDateTime(startDate);
+            endInput.value = formatDateTime(endDate);
+
+            startInput.disabled = true;
+            endInput.disabled = true;
+        } else {
+            startInput.disabled = false;
+            endInput.disabled = false;
+        }
+    });
+
+    saveBtn.addEventListener("click", async () => {
         const eventData = {
             title: document.getElementById("event-title").value,
             description: document.getElementById("event-description").value,
-            start_time: document.getElementById("event-start").value,
-            end_time: document.getElementById("event-end").value,
-            all_day: document.getElementById("event-all-day").checked,
+            start_time: startInput.value,
+            end_time: endInput.value,
+            all_day: allDayCheckbox.checked,
             user_email: username
         };
 
@@ -220,6 +249,7 @@ export function showCalendar(username, referenceDate = new Date()) {
         }
     });
 }, 0);
+
 
 });
 
