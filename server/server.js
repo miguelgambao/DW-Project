@@ -152,8 +152,8 @@ async function startServer() {
     }
   });
 
-  server.listen(3000, '0.0.0.0', () => {
-    console.log("Server running on http://0.0.0.0:3000");
+  server.listen(8080, '0.0.0.0', () => {
+    console.log("Server running on http://0.0.0.0:8080");
   });
 }
 
