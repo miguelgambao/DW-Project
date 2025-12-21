@@ -1,6 +1,38 @@
-import {RegisterUI} from "./registerUI.js";
-import { showDashboardTasks } from './dashboard.js';
+import { RegisterUI } from "./registerUI.js";
+import { showDashboardTasks } from "./dashboard.js";
 import { showCalendar } from "./calendar.js";
+
+const isElectron = window.api && window.api.isElectron;
+
+async function loginUser(email, password) {
+    if (isElectron) {
+        return await window.api.loginUser(email, password);
+    } else {
+        const res = await fetch("http://10.17.0.28:8080/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.userId;
+    }
+}
+
+async function createUser(email, password) {
+    if (isElectron) {
+        return await window.api.createUser(email, password);
+    } else {
+        const res = await fetch("http://10.17.0.28:8080/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.userId;
+    }
+}
 
 window.addEventListener("DOMContentLoaded", () => {
     const loginSection = document.querySelector(".login-section");
@@ -25,8 +57,9 @@ window.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // REGISTER
         if (registerUI.isRegisterMode()) {
-            const userId = await api.createUser(email, password);
+            const userId = await createUser(email, password);
             if (userId) {
                 alert("Account created!");
                 registerUI.setLoginMode();
@@ -36,7 +69,7 @@ window.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const userId = await api.loginUser(email, password);
+        const userId = await loginUser(email, password);
         if (userId) {
             localStorage.setItem("loggedInUser", JSON.stringify({ email, userId }));
             showDashboard(email);
@@ -56,22 +89,24 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         dashboardSection.innerHTML = `
-      <main>
-        <aside>
-          <img src="assets/media/logoHorizontal.svg" alt="">
-          <button class="calendar">Calendar</button>
-        </aside>
-        <div>
-        <h1 class="general-title">Dashboard</h1>
-        </div>
-        <section class="content"></section>
-      </main>
-    `;
+            <main>
+                <aside>
+                    <img src="assets/media/logoHorizontal.svg" alt="">
+                    <button class="calendar">Calendar</button>
+                </aside>
+                <div>
+                    <h1 class="general-title">Dashboard</h1>
+                </div>
+                <section class="content"></section>
+            </main>
+        `;
+
         showDashboardTasks(username);
 
-            const calendarButton = dashboardSection.querySelector(".calendar");
-            calendarButton.addEventListener("click", () => {
-            showCalendar(username,new Date());
-    });
+        dashboardSection
+            .querySelector(".calendar")
+            .addEventListener("click", () => {
+                showCalendar(username, new Date());
+            });
     }
 });
