@@ -1,4 +1,4 @@
-const http = require("http");
+const http = require("http"); 
 const { MongoClient } = require("mongodb");
 const fs = require("fs");
 const path = require("path");
@@ -25,6 +25,7 @@ function getContentType(ext) {
     case '.js': return 'application/javascript';
     case '.css': return 'text/css';
     case '.svg': return 'image/svg+xml';
+    case '.woff2': return 'font/woff2';
     case '.json': return 'application/json';
     default: return 'text/plain';
   }
@@ -34,6 +35,9 @@ async function startServer() {
   const client = await MongoClient.connect(url);
   const db = client.db(dbName);
   console.log("Connected to MongoDB");
+
+  const STATIC_CLIENT_DIR = path.join(__dirname, '..', 'client');
+  const STATIC_ASSETS_DIR = path.join(__dirname, '..', 'assets');
 
   const server = http.createServer(async (req, res) => {
     // --- CORS ---
@@ -131,16 +135,16 @@ async function startServer() {
         return;
       }
 
-let filePath = reqUrl === '/' ? 'client/index.html' : `client${reqUrl}`;
-filePath = path.join(__dirname, '..', filePath);
+      // --- STATIC FILES ---
+      let filePath = null;
 
-if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-  const ext = path.extname(filePath);
-  res.writeHead(200, { 'Content-Type': getContentType(ext) });
-  res.end(fs.readFileSync(filePath));
-  return;
-}
-
+      if (reqUrl === '/' || reqUrl.startsWith('/index.html')) {
+        filePath = path.join(STATIC_CLIENT_DIR, 'index.html');
+      } else if (reqUrl.startsWith('/assets/')) {
+        filePath = path.join(STATIC_ASSETS_DIR, reqUrl.replace('/assets/', ''));
+      } else {
+        filePath = path.join(STATIC_CLIENT_DIR, reqUrl);
+      }
 
       if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         const ext = path.extname(filePath);
@@ -149,6 +153,7 @@ if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         return;
       }
 
+      // --- 404 ---
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('Not found');
 
