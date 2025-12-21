@@ -131,9 +131,16 @@ async function startServer() {
         return;
       }
 
-      // --- STATIC FILES ---
-      let filePath = reqUrl === '/' ? 'index.html' : reqUrl.slice(1);
-      filePath = path.join(__dirname, '..', 'client', filePath);
+let filePath = reqUrl === '/' ? 'client/index.html' : `client${reqUrl}`;
+filePath = path.join(__dirname, '..', filePath);
+
+if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+  const ext = path.extname(filePath);
+  res.writeHead(200, { 'Content-Type': getContentType(ext) });
+  res.end(fs.readFileSync(filePath));
+  return;
+}
+
 
       if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         const ext = path.extname(filePath);
