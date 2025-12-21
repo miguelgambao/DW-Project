@@ -85,6 +85,40 @@ async function startServer() {
                 return;
             }
 
+            if (req.method === "POST" && req.url === "/calendar-events") {
+                let body = "";
+
+                req.on("data", (chunk) => {
+                    body += chunk.toString();
+                });
+
+                req.on("end", async () => {
+                    try {
+                        const data = JSON.parse(body);
+
+                        const event = {
+                            title: data.title,
+                            description: data.description,
+                            start_time: data.start_time,
+                            end_time: data.end_time,
+                            all_day: data.all_day,
+                            user_email: data.user_email,
+                        };
+
+                        const result = await db.collection("events").insertOne(event);
+
+                        res.writeHead(201, {"Content-Type": "application/json"});
+                        res.end(JSON.stringify({success: true, id: result.insertedId}));
+                    } catch (err) {
+                        console.error(err);
+                        res.writeHead(400, {"Content-Type": "application/json"});
+                        res.end(JSON.stringify({error: "Invalid data"}));
+                    }
+                });
+
+                return;
+            }
+
             res.writeHead(404, {"Content-Type": "text/plain"});
             res.end("Not found");
         } catch (err) {

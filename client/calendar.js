@@ -161,38 +161,66 @@ export function showCalendar(username, referenceDate = new Date()) {
         <div class="modal-form-group">
             <div>
                 <label>Title</label>
-                <input type="text" class="input-primary fill-container" />
+                <input type="text" id="event-title" class="input-primary fill-container" />
             </div>
 
             <div>
                 <label>Description</label>
-                <input type="text" class="input-primary fill-container" />
+                <input type="text" id="event-description" class="input-primary fill-container" />
             </div>
 
             <div class="datetime-container">
                 <div class="datetime-input">
                     <label>Start</label>
-                    <input type="datetime-local" class="input-secondary" />
+                    <input type="datetime-local" id="event-start" class="input-secondary" />
                 </div>
 
                 <div class="datetime-input">
                     <label>End</label>
-                    <input type="datetime-local" class="input-secondary" />
+                    <input type="datetime-local" id="event-end" class="input-secondary" />
                 </div>
             </div>
             
                  <div class="all-day-container">
                 <label>
-                    <input type="checkbox" class="checkbox" />
+                    <input type="checkbox" id="event-all-day" class="checkbox" />
                     All day
                 </label>
                 </div>
-            <button class="button-primary Smaller">
+            <button type="button" class="button-primary Smaller" id="save-event">
                 Save
             </button>
             </div>
         `,
+        
     });
+
+    setTimeout(() => {
+    document.getElementById("save-event").addEventListener("click", async () => {
+        const eventData = {
+            title: document.getElementById("event-title").value,
+            description: document.getElementById("event-description").value,
+            start_time: document.getElementById("event-start").value,
+            end_time: document.getElementById("event-end").value,
+            all_day: document.getElementById("event-all-day").checked,
+            user_email: username
+        };
+
+        const response = await fetch("http://localhost:3000/calendar-events", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(eventData)
+        });
+
+        if (response.ok) {
+            alert("Event created!");
+            showCalendar(username, referenceDate);
+        } else {
+            alert("Failed to create event");
+        }
+    });
+}, 0);
+
 });
 
 
