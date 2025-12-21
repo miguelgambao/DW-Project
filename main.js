@@ -24,7 +24,7 @@ async function createWindow() {
 
     const window = new BrowserWindow(windowOptions);
 
-    window.loadFile('index.html');
+    window.loadURL('http://10.17.0.28:8080');
     window.on('closed', () => app.quit());
 
     ipcMain.handle('create-user', async (event, email, password) => {
