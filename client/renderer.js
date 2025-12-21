@@ -1,6 +1,6 @@
-import {RegisterUI} from "./client/registerUI.js";
-import { showDashboardTasks } from './client/dashboard.js';
-import { showCalendar } from "./client/calendar.js";
+import {RegisterUI} from "./registerUI.js";
+import { showDashboardTasks } from './dashboard.js';
+import { showCalendar } from "./calendar.js";
 
 window.addEventListener("DOMContentLoaded", () => {
     const loginSection = document.querySelector(".login-section");

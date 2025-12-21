@@ -133,7 +133,7 @@ async function startServer() {
 
       // --- STATIC FILES ---
       let filePath = reqUrl === '/' ? 'index.html' : reqUrl.slice(1);
-      filePath = path.join(__dirname, filePath);
+      filePath = path.join(__dirname, '..', 'client', filePath);
 
       if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         const ext = path.extname(filePath);
