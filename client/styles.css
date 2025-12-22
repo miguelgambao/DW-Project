@@ -176,7 +176,7 @@ aside {
   z-index: 10000;
 }
 aside img {
-  width: 30%;
+  width: 50%;
   margin-top: 7vh;
   margin-left: 2vw;
 }
@@ -211,6 +211,14 @@ aside img {
 }
 
 .aside-nav .button-terciary:hover {
+  background-color: var(--light-green-secondary);
+}
+
+.aside-nav .button-terciary.active {
+  background-color: var(--light-green-secondary);
+}
+
+.aside-nav .button-terciary.active:hover {
   background-color: var(--light-green-secondary);
 }
 

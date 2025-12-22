@@ -126,11 +126,18 @@ window.addEventListener("DOMContentLoaded", () => {
         `;
 
         showDashboardTasks(username);
+        dashboardSection.querySelector("#dashboardBtn").classList.add("active");
 
-        // Navigation handlers
+        const setActiveNavButton = (buttonId) => {
+            const navButtons = dashboardSection.querySelectorAll(".aside-nav .button-terciary");
+            navButtons.forEach(btn => btn.classList.remove("active"));
+            dashboardSection.querySelector(`#${buttonId}`).classList.add("active");
+        };
+
         dashboardSection
             .querySelector("#dashboardBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("dashboardBtn");
                 document.getElementById("page-title").textContent = "Dashboard";
                 showDashboardTasks(username);
             });
@@ -138,6 +145,7 @@ window.addEventListener("DOMContentLoaded", () => {
         dashboardSection
             .querySelector("#calendarBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("calendarBtn");
                 document.getElementById("page-title").textContent = "Calendar";
                 showCalendar(username, new Date());
             });
@@ -145,6 +153,7 @@ window.addEventListener("DOMContentLoaded", () => {
         dashboardSection
             .querySelector("#tasksBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("tasksBtn");
                 document.getElementById("page-title").textContent = "Tasks";
                 showTasks(username);
             });
@@ -152,12 +161,14 @@ window.addEventListener("DOMContentLoaded", () => {
         dashboardSection
             .querySelector("#profileBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("profileBtn");
                 showProfile(username);
             });
 
         dashboardSection
             .querySelector("#pomodoroBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("pomodoroBtn");
                 document.getElementById("page-title").textContent = "Pomodoro";
                 showPomodoroPage();
             });
