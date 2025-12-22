@@ -96,11 +96,26 @@ window.addEventListener("DOMContentLoaded", () => {
                 <aside>
                     <img src="assets/media/logoHorizontal.svg" alt="">
                     <nav class="aside-nav">
-                        <button class="button-terciary M" id="dashboardBtn">Dashboard</button>
-                        <button class="button-terciary M" id="calendarBtn">Calendar</button>
-                        <button class="button-terciary M" id="tasksBtn">Tasks</button>
-                        <button class="button-terciary M" id="pomodoroBtn">Pomodoro</button>
-                        <button class="button-terciary M" id="profileBtn">Profile</button>
+                        <button class="button-terciary M" id="dashboardBtn">
+                            <img src="assets/icons/dashboard.svg" alt="">
+                            Dashboard
+                        </button>
+                        <button class="button-terciary M" id="calendarBtn">
+                            <img src="assets/icons/calendar.svg" alt="">
+                            Calendar
+                        </button>
+                        <button class="button-terciary M" id="tasksBtn">
+                            <img src="assets/icons/tasks.svg" alt="">
+                            Tasks
+                        </button>
+                        <button class="button-terciary M" id="pomodoroBtn">
+                            <img src="assets/icons/alarm-clock.svg" alt="">
+                            Pomodoro
+                        </button>
+                        <button class="button-terciary M" id="profileBtn">
+                            <img src="assets/icons/profile.svg" alt="">
+                            Profile
+                        </button>
                     </nav>
                 </aside>
                 <div>

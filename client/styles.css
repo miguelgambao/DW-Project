@@ -197,6 +197,17 @@ aside img {
   text-decoration: none;
   border-radius: var(--border-radius);
   transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.aside-nav .button-terciary img {
+  height: 1.25rem;
+  width: 1.25rem;
+  flex-shrink: 0;
+  display: block;
+  margin: 0;
 }
 
 .aside-nav .button-terciary:hover {
