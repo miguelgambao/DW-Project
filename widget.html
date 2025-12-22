@@ -68,10 +68,10 @@
             color: var(--black);
         }
         
-        .close-btn {
+        .close-btn,
+        .expand-btn {
             position: absolute;
             top: 6px;
-            right: 6px;
             width: 20px;
             height: 20px;
             border-radius: 50%;
@@ -88,11 +88,22 @@
             -webkit-app-region: no-drag;
         }
         
-        .close-btn:hover {
+        .close-btn {
+            right: 6px;
+        }
+        
+        .expand-btn {
+            left: 6px;
+            font-size: 12px;
+        }
+        
+        .close-btn:hover,
+        .expand-btn:hover {
             background: rgba(0, 0, 0, 0.4);
         }
         
-        .widget-container.break-mode .close-btn {
+        .widget-container.break-mode .close-btn,
+        .widget-container.break-mode .expand-btn {
             color: var(--black);
         }
         
@@ -103,6 +114,7 @@
 </head>
 <body>
     <div class="widget-container" id="widgetContainer">
+        <button class="expand-btn" id="expandBtn">⛶</button>
         <button class="close-btn" id="closeBtn">×</button>
         <div class="widget-mode" id="widgetMode">WORK</div>
         <div class="widget-timer" id="widgetTimer">25:00</div>
@@ -112,6 +124,15 @@
         const widgetContainer = document.getElementById('widgetContainer');
         const widgetMode = document.getElementById('widgetMode');
         const widgetTimer = document.getElementById('widgetTimer');
+        const expandBtn = document.getElementById('expandBtn');
+        
+        // Expand button handler
+        expandBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (window.api && window.api.showMainWindow) {
+                window.api.showMainWindow();
+            }
+        });
         const closeBtn = document.getElementById('closeBtn');
         
         // Close button handler
