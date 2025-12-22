@@ -1,47 +1,62 @@
-const { MongoClient } = require("mongodb");
+const {MongoClient} = require("mongodb");
 
 const url = "mongodb://localhost:27017";
 const dbName = "pomodoro_app";
 
-async function loginUser(username, password) {
-  const client = new MongoClient(url);
-  try {
+const withDB = async (fn) => {
+    const client = new MongoClient(url);
     await client.connect();
-    const db = client.db("pomodoro_app");
+    const db = client.db(dbName);
 
-    const user = await db.collection("users").findOne({
-      username: username.trim().toLowerCase(),
-      password: password.trim()
+    return fn(db).finally(() => client.close());
+};
+
+const loginUser = (username, password) =>
+    withDB((db) =>
+        db
+        .collection("users")
+        .findOne({
+            username: username.trim().toLowerCase(),
+            password: password.trim(),
+        })
+        .then((user) => (user ? user._id : null))
+    );
+
+const createUser = (username, password) =>
+    withDB((db) => {
+        const normalizedUsername = username.trim().toLowerCase();
+
+        return db
+        .collection("users")
+        .findOne({username: normalizedUsername})
+        .then((existing) => {
+            if (existing) return null;
+
+            return db
+            .collection("users")
+            .insertOne({
+                username: normalizedUsername,
+                password: password.trim(),
+            })
+            .then((res) => res.insertedId);
+        });
     });
 
-    return user ? user._id : null;
-  } finally {
-    await client.close();
-  }
-}
+const getUser = (username) =>
+    withDB((db) =>
+        db.collection("users").findOne({
+            username: username.trim().toLowerCase(),
+        })
+    );
 
-async function createUser(username, password) {
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    const db = client.db("pomodoro_app");
+const updatePassword = (username, password) =>
+    withDB((db) =>
+        db.collection("users").updateOne({username: username.trim().toLowerCase()}, {$set: {password: password.trim()}})
+    ).then(() => true);
 
-    const normalizedUsername = username.trim().toLowerCase();
-
-    const existing = await db.collection("users").findOne({ username: normalizedUsername });
-    if (existing) return null;
-
-    const result = await db.collection("users").insertOne({
-      username: normalizedUsername,
-      password: password.trim()
-    });
-
-    return result.insertedId;
-  } finally {
-    await client.close();
-  }
-}
-
-
-
-module.exports = { createUser, loginUser };
+module.exports = {
+    loginUser,
+    createUser,
+    getUser,
+    updatePassword,
+};
