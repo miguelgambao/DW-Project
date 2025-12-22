@@ -41,9 +41,10 @@ export async function showDashboardTasks(userEmail) {
       <div class="your-pomodoro-container">
         <h3>Your Pomodoro</h3>
         <div class="pomodoro-card">
+            <h4 id="dashboardModeLabel">Work Session</h4>
             <h1 class="font-alert" id="dashboardTimerDisplay">25:00</h1>
             <div class="pomodoro-controls">
-              <button class="button-secondary M" id="dashboardTimerBtn">Start</button>
+              <button class="button-primary M dashboard-timer-btn" id="dashboardTimerBtn">Start</button>
               <button class="button-secondary M" id="dashboardResetBtn">Reset</button>
             </div>
         </div>
@@ -55,13 +56,24 @@ export async function showDashboardTasks(userEmail) {
     const timerState = getTimerState();
     const dashboardTimer = document.getElementById('dashboardTimerDisplay');
     const dashboardBtn = document.getElementById('dashboardTimerBtn');
+    const dashboardMode = document.getElementById('dashboardModeLabel');
     
     if (dashboardTimer) {
       dashboardTimer.textContent = timerState.formattedTime;
     }
     
+    if (dashboardMode) {
+      dashboardMode.textContent = timerState.modeLabel;
+    }
+    
     if (dashboardBtn) {
       dashboardBtn.textContent = timerState.isRunning ? 'Pause' : 'Start';
+      // Add paused class when stopped
+      if (timerState.isRunning) {
+        dashboardBtn.classList.remove('paused');
+      } else {
+        dashboardBtn.classList.add('paused');
+      }
       dashboardBtn.addEventListener('click', () => {
         toggleTimer();
       });

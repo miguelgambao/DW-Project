@@ -16,6 +16,7 @@ let currentMode = 'pomodoro';
 const durations = { ...DEFAULT_DURATIONS };
 let pomodoroCount = 0; // Track completed pomodoros
 let longBreakInterval = 3; // Number of short breaks before long break
+let autoStart = false; // Auto-start next timer when current one completes
 
 // DOM element references
 let startBtn = null;
@@ -41,6 +42,12 @@ function isValidInterval(value) {
 function updateButtonText(text) {
   if (startBtn) {
     startBtn.textContent = text;
+    // Add paused class when button shows Start/Resume
+    if (text === 'Start' || text === 'Resume') {
+      startBtn.classList.add('paused');
+    } else {
+      startBtn.classList.remove('paused');
+    }
   }
 }
 
@@ -55,6 +62,11 @@ function getModeLabel(mode) {
 
 // Timer functions
 function startTimer() {
+  // Clear any existing interval to prevent piling up
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+  
   isRunning = true;
   updateDashboardWidget();
   timerInterval = setInterval(() => {
@@ -100,6 +112,14 @@ function handleTimerComplete() {
     updateDisplay();
     updateActiveModeButton();
   }
+  
+  // Auto-start next timer if enabled
+  if (autoStart) {
+    setTimeout(() => {
+      startTimer();
+      updateButtonText('Pause');
+    }, 1000); // Small delay before auto-starting
+  }
 }
 
 function pauseTimer() {
@@ -121,8 +141,8 @@ export function resetTimerFromDashboard() {
 
 function switchMode(mode) {
   if (isRunning) {
-    alert('Please stop the timer before switching modes.');
-    return;
+    pauseTimer();
+    updateButtonText('Start');
   }
   currentMode = mode;
   timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
@@ -132,6 +152,12 @@ function switchMode(mode) {
 function updateDisplay() {
   if (timerDisplay) {
     timerDisplay.textContent = formatTime(timeRemaining);
+    // Add break class when in short or long break mode
+    if (currentMode === 'shortBreak' || currentMode === 'longBreak') {
+      timerDisplay.classList.add('break-mode');
+    } else {
+      timerDisplay.classList.remove('break-mode');
+    }
   }
   updateDashboardWidget();
 }
@@ -143,10 +169,22 @@ function updateDashboardWidget() {
   
   if (dashboardTimer) {
     dashboardTimer.textContent = formatTime(timeRemaining);
+    // Add break class when in short or long break mode
+    if (currentMode === 'shortBreak' || currentMode === 'longBreak') {
+      dashboardTimer.classList.add('break-mode');
+    } else {
+      dashboardTimer.classList.remove('break-mode');
+    }
   }
   
   if (dashboardBtn) {
     dashboardBtn.textContent = isRunning ? 'Pause' : 'Start';
+    // Add paused class when stopped
+    if (isRunning) {
+      dashboardBtn.classList.remove('paused');
+    } else {
+      dashboardBtn.classList.add('paused');
+    }
   }
   
   if (dashboardMode) {
@@ -221,7 +259,7 @@ function handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput, long
 
 // DOM initialization
 function initializeEventListeners(elements) {
-  const { startBtn, resetBtn, modeBtns, pomodoroInput, shortBreakInput, longBreakInput, longBreakIntervalInput, saveSettingsBtn } = elements;
+  const { startBtn, resetBtn, modeBtns, pomodoroInput, shortBreakInput, longBreakInput, longBreakIntervalInput, saveSettingsBtn, autoStartCheckbox } = elements;
 
   startBtn.addEventListener('click', handleStartClick);
   resetBtn.addEventListener('click', handleResetClick);
@@ -232,6 +270,10 @@ function initializeEventListeners(elements) {
 
   saveSettingsBtn.addEventListener('click', () => {
     handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput, longBreakIntervalInput);
+  });
+  
+  autoStartCheckbox.addEventListener('change', (e) => {
+    autoStart = e.target.checked;
   });
 }
 
@@ -245,7 +287,8 @@ function getDOMElements() {
     shortBreakInput: document.getElementById('shortBreakInput'),
     longBreakInput: document.getElementById('longBreakInput'),
     longBreakIntervalInput: document.getElementById('longBreakIntervalInput'),
-    saveSettingsBtn: document.getElementById('saveSettingsBtn')
+    saveSettingsBtn: document.getElementById('saveSettingsBtn'),
+    autoStartCheckbox: document.getElementById('autoStartCheckbox')
   };
 }
 
@@ -316,6 +359,12 @@ export function showPomodoroPage() {
           <div class="time-selector">
             <label for="longBreakIntervalInput">Short Breaks before Long Break:</label>
             <input type="number" id="longBreakIntervalInput" min="1" max="10" value="${longBreakInterval}" />
+          </div>
+          <div class="time-selector">
+            <label for="autoStartCheckbox">
+              <input type="checkbox" id="autoStartCheckbox" ${autoStart ? 'checked' : ''} />
+              Auto-start next timer
+            </label>
           </div>
         </div>
         <button class="button-secondary M" id="saveSettingsBtn">Save Settings</button>

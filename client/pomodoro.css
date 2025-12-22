@@ -48,6 +48,11 @@
   font-weight: 700;
   font-family: 'Inter', monospace;
   margin: 2rem 0;
+  transition: color 0.3s ease;
+}
+
+.timer-display.break-mode {
+  color: var(--yellow-primary);
 }
 
 
@@ -97,6 +102,23 @@
   border-color: var(--dark-green);
 }
 
+.time-selector input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  accent-color: var(--dark-green);
+  border-radius: var(--border-radius);
+}
+
+.time-selector label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem 0;
+}
+
 .pomodoro-controls {
   display: flex;
   gap: 0.5rem;
@@ -105,11 +127,78 @@
 .pomodoro-controls .button-primary {
   width: fit-content;
   min-width: 300px;
+  background: linear-gradient(135deg, #5fa763 0%, #4d8f51 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(95, 167, 99, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.pomodoro-controls .button-primary.paused {
+  background: linear-gradient(135deg, var(--dark-green) 0%, var(--dark-green-secondary) 100%);
+  box-shadow: 0 4px 12px rgba(59, 98, 63, 0.4);
+}
+
+.pomodoro-controls .button-primary:hover {
+  background: linear-gradient(135deg, #4d8f51 0%, #5fa763 100%);
+}
+
+.pomodoro-controls .button-primary.paused:hover {
+  background: linear-gradient(135deg, var(--dark-green-secondary) 0%, var(--dark-green) 100%);
 }
 
 .pomodoro-controls .button-secondary {
   width: fit-content;
   min-width: 100px;
+  background-color: var(--yellow-primary);
+  border: none;
+  color: var(--black);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.pomodoro-controls .button-secondary:hover {
+  background-color: var(--yellow-lighter);
+}
+
+.pomodoro-settings .button-secondary {
+  background-color: var(--yellow-primary);
+  border: none;
+  color: var(--black);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.pomodoro-settings .button-secondary:hover {
+  background-color: var(--yellow-lighter);
+}
+
+/* Dashboard pomodoro button styling */
+.button-primary.dashboard-timer-btn {
+  width: fit-content !important;
+  min-width: 100px;
+  background: linear-gradient(135deg, #5fa763 0%, #4d8f51 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(95, 167, 99, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.button-primary.dashboard-timer-btn.paused {
+  background: linear-gradient(135deg, var(--dark-green) 0%, var(--dark-green-secondary) 100%);
+  box-shadow: 0 4px 12px rgba(59, 98, 63, 0.4);
+}
+
+.button-primary.dashboard-timer-btn:hover {
+  background: linear-gradient(135deg, #4d8f51 0%, #5fa763 100%);
+}
+
+.button-primary.dashboard-timer-btn.paused:hover {
+  background: linear-gradient(135deg, var(--dark-green-secondary) 0%, var(--dark-green) 100%);
 }
 
 
