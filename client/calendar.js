@@ -235,7 +235,7 @@ export function showCalendar(username, referenceDate = new Date()) {
             user_email: username
         };
 
-        const response = await fetch("http://localhost:3000/calendar-events", {
+        const response = await fetch("http://0.0.0.0:8080/calendar-events", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(eventData)
