@@ -2,6 +2,8 @@ import {RegisterUI} from "./client/registerUI.js";
 import { showDashboardTasks } from './client/dashboard.js';
 import { showCalendar } from "./client/calendar.js";
 import { showTasks } from "./client/tasks.js";
+import { showProfile } from "./client/profile.js";
+import { api } from "./client/api.js";
 
 window.addEventListener("DOMContentLoaded", () => {
     const loginSection = document.querySelector(".login-section");
@@ -62,6 +64,7 @@ window.addEventListener("DOMContentLoaded", () => {
           <img src="assets/media/logoHorizontal.svg" alt="">
           <button class="calendar">Calendar</button>
           <button class="tasks">Tasks</button>
+          <button class="profile">Profile</button>
         </aside>
         <div>
         <h1 class="general-title">Dashboard</h1>
@@ -79,6 +82,11 @@ window.addEventListener("DOMContentLoaded", () => {
             const tasksButton = dashboardSection.querySelector(".tasks");
             tasksButton.addEventListener("click", () => {
             showTasks(username);
+    });
+
+            const profileButton = dashboardSection.querySelector(".profile");
+            profileButton.addEventListener("click", () => {
+            showProfile(username);
     });
     }
 });
