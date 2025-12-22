@@ -47,7 +47,7 @@ async function startServer() {
     const server = http.createServer(async (req, res) => {
         // --- CORS ---
         res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         if (req.method === "OPTIONS") {
@@ -146,6 +146,35 @@ async function startServer() {
 
                 res.writeHead(200, {"Content-Type": "application/json"});
                 res.end(JSON.stringify({success: true}));
+                return;
+            }
+
+            if (method === "POST" && reqUrl === "/tasks") {
+                const data = await parseBody(req);
+
+                if (!data.title || !data.user_email || !data.due_date) {
+                    res.writeHead(400);
+                    res.end(JSON.stringify({error: "Missing required fields"}));
+                    return;
+                }
+
+                const now = new Date().toISOString().split("T")[0];
+
+                const task = {
+                    title: data.title,
+                    description: data.description || "",
+                    due_date: data.due_date,
+                    due_time: data.due_time || "",
+                    created_at: now,
+                    updated_at: now,
+                    completed: false,
+                    user_email: data.user_email,
+                };
+
+                const result = await db.collection("tasks").insertOne(task);
+
+                res.writeHead(201, {"Content-Type": "application/json"});
+                res.end(JSON.stringify({success: true, id: result.insertedId}));
                 return;
             }
 
