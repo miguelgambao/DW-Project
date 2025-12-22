@@ -3,6 +3,16 @@ export const loadWeekEvents = (username, weekStart, weekEnd) => {
         return Promise.resolve([]);
     }
 
+    // Use IPC if in Electron, otherwise fall back to fetch
+    if (window.api && window.api.isElectron) {
+        return window.api.getCalendarEvents(username, weekStart, weekEnd)
+            .then(events => (Array.isArray(events) ? events : []))
+            .catch(error => {
+                console.error("Error loading events:", error);
+                return [];
+            });
+    }
+
     const API_BASE = window.location.origin;
 
     return fetch(

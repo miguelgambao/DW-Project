@@ -23,8 +23,9 @@ async function createWindow() {
   };
 
   const window = new BrowserWindow(windowOptions);
-  // use for testing locally on electron window.loadURL("http://localhost:8080");
-  window.loadURL("http://10.17.0.28:8080");
+  // use for testing locally on electron 
+  window.loadURL("http://localhost:8080");
+  // window.loadURL("http://10.17.0.28:8080");
   window.on("closed", () => app.quit());
 
   ipcMain.handle("create-user", async (event, email, password) => {
@@ -33,6 +34,20 @@ async function createWindow() {
 
   ipcMain.handle("login-user", async (event, email, password) => {
     return await loginUser(email, password);
+  });
+
+  ipcMain.handle("update-password", async (event, username, newPassword) => {
+    try {
+      const res = await fetch(`http://localhost:8080/users/${encodeURIComponent(username)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: newPassword })
+      });
+      if (!res.ok) throw new Error("Failed to update password");
+      return { success: true };
+    } catch (err) {
+      throw new Error(err.message);
+    }
   });
 }
 

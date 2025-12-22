@@ -97,17 +97,24 @@ export function showCalendar(username, referenceDate = new Date()) {
                     user_email: username
                 };
 
-                const response = await fetch("/calendar-events", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(eventData)
-                });
-
-                if (response.ok) {
+                try {
+                    if (window.api && window.api.isElectron) {
+                        // Use IPC for Electron
+                        await window.api.createCalendarEvent(eventData);
+                    } else {
+                        // Fallback to direct fetch for web browser
+                        const response = await fetch("/calendar-events", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(eventData)
+                        });
+                        if (!response.ok) throw new Error("Failed to create event");
+                    }
                     alert("Event created!");
                     showCalendar(username, referenceDate);
-                } else {
-                    alert("Failed to create event");
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to create event: " + err.message);
                 }
             };
         }, 0);
