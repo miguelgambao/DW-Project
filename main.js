@@ -151,7 +151,6 @@ function createWidgetWindow() {
   widgetWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   widgetWindow.setAlwaysOnTop(true, "floating");
   
-  // Request current timer state from main window after widget loads
   widgetWindow.webContents.on('did-finish-load', () => {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.executeJavaScript('if (window.updateWidgetWindow) { window.updateWidgetWindow(); }');
