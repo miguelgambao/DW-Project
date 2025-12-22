@@ -41,28 +41,23 @@ export async function showDashboardTasks(userEmail) {
       <div class="your-pomodoro-container">
         <h3>Your Pomodoro</h3>
         <div class="pomodoro-card">
-            <small id="dashboardModeLabel" style="color: var(--gray-secondary); font-size: 0.875rem;">Work Session</small>
             <h1 class="font-alert" id="dashboardTimerDisplay">25:00</h1>
-            <div style="display: flex; gap: 0.5rem;">
+            <div class="pomodoro-controls">
               <button class="button-secondary M" id="dashboardTimerBtn">Start</button>
               <button class="button-secondary M" id="dashboardResetBtn">Reset</button>
             </div>
         </div>
         </div>
+      </div>
     `;
     
     // Update dashboard widget with current timer state
     const timerState = getTimerState();
     const dashboardTimer = document.getElementById('dashboardTimerDisplay');
     const dashboardBtn = document.getElementById('dashboardTimerBtn');
-    const dashboardMode = document.getElementById('dashboardModeLabel');
     
     if (dashboardTimer) {
       dashboardTimer.textContent = timerState.formattedTime;
-    }
-    
-    if (dashboardMode) {
-      dashboardMode.textContent = timerState.modeLabel;
     }
     
     if (dashboardBtn) {

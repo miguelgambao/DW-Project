@@ -139,6 +139,12 @@ small{
   align-items: center;
 }
 
+.pomodoro-card .pomodoro-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
 .titleBar {
   -webkit-app-region: drag;
   display: flex;

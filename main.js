@@ -23,8 +23,9 @@ async function createWindow() {
   };
 
   const window = new BrowserWindow(windowOptions);
-  // use for testing locally on electron window.loadURL("http://localhost:8080");
-  window.loadURL("http://10.17.0.28:8080");
+  // use for testing locally on electron 
+  window.loadURL("http://localhost:8080");
+  //window.loadURL("http://10.17.0.28:8080");
   window.on("closed", () => app.quit());
 
   ipcMain.handle("create-user", async (event, email, password) => {
