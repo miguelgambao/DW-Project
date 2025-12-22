@@ -140,6 +140,29 @@ function getWeekRange(date) {
 function renderWeekEvents(events, weekStart, calendarGrid) {
     const cells = calendarGrid.querySelectorAll(".day-cell");
 
+    // Debug log for fetched events
+    console.log("Events to render:", events);
+
+    if (!events || events.length === 0) {
+        // Show a message in the calendar grid if no events
+        const gridParent = calendarGrid.parentElement;
+        if (gridParent && !gridParent.querySelector('.no-events-msg')) {
+            const msg = document.createElement('div');
+            msg.className = 'no-events-msg';
+            msg.textContent = 'No events for this week.';
+            msg.style.textAlign = 'center';
+            msg.style.margin = '2rem auto';
+            msg.style.color = '#888';
+            msg.style.fontSize = '1.1rem';
+            gridParent.appendChild(msg);
+        }
+        return;
+    } else {
+        // Remove any previous no-events message
+        const prevMsg = calendarGrid.parentElement && calendarGrid.parentElement.querySelector('.no-events-msg');
+        if (prevMsg) prevMsg.remove();
+    }
+
     events.forEach(event => {
         const start = new Date(event.start_time);
 
