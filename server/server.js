@@ -176,49 +176,51 @@ async function startServer() {
                 return res.end(JSON.stringify(events));
             }
 
-            if (method === "GET" && reqUrl.startsWith("/users/")) {
-                const urlPath = reqUrl.split("?")[0]; // Remove query parameters
-                const username = decodeURIComponent(urlPath.split("/")[2] || "").trim().toLowerCase();
+            if (reqUrl.startsWith("/users/") && !reqUrl.endsWith(".js") && !reqUrl.endsWith(".css")) {
+                if (method === "GET") {
+                    const urlPath = reqUrl.split("?")[0]; 
+                    const username = decodeURIComponent(urlPath.split("/")[2] || "").trim().toLowerCase();
 
-                if (!username) {
-                    res.writeHead(400, {"Content-Type": "application/json"});
-                    return res.end(JSON.stringify({error: "Username is required"}));
+                    if (!username) {
+                        res.writeHead(400, {"Content-Type": "application/json"});
+                        return res.end(JSON.stringify({error: "Username is required"}));
+                    }
+
+                    const user = await db.collection("users").findOne({username});
+
+                    if (!user) {
+                        res.writeHead(404, {"Content-Type": "application/json"});
+                        return res.end(JSON.stringify({error: "User not found"}));
+                    }
+
+                    res.writeHead(200, {"Content-Type": "application/json"});
+                    return res.end(
+                        JSON.stringify({
+                            username: user.username,
+                        })
+                    );
                 }
 
-                const user = await db.collection("users").findOne({username});
+                if (method === "PATCH") {
+                    const urlPath = reqUrl.split("?")[0];
+                    const username = decodeURIComponent(urlPath.split("/")[2] || "").trim().toLowerCase();
+                    const {password} = await parseBody(req);
 
-                if (!user) {
-                    res.writeHead(404, {"Content-Type": "application/json"});
-                    return res.end(JSON.stringify({error: "User not found"}));
+                    if (!password) {
+                        res.writeHead(400, {"Content-Type": "application/json"});
+                        return res.end(JSON.stringify({error: "Password is required"}));
+                    }
+
+                    const result = await db.collection("users").updateOne({username}, {$set: {password: password.trim()}});
+
+                    if (result.matchedCount === 0) {
+                        res.writeHead(404, {"Content-Type": "application/json"});
+                        return res.end(JSON.stringify({error: "User not found"}));
+                    }
+
+                    res.writeHead(200, {"Content-Type": "application/json"});
+                    return res.end(JSON.stringify({success: true}));
                 }
-
-                res.writeHead(200, {"Content-Type": "application/json"});
-                return res.end(
-                    JSON.stringify({
-                        username: user.username,
-                    })
-                );
-            }
-
-            if (method === "PATCH" && reqUrl.startsWith("/users/")) {
-                const urlPath = reqUrl.split("?")[0]; // Remove query parameters
-                const username = decodeURIComponent(urlPath.split("/")[2] || "").trim().toLowerCase();
-                const {password} = await parseBody(req);
-
-                if (!password) {
-                    res.writeHead(400, {"Content-Type": "application/json"});
-                    return res.end(JSON.stringify({error: "Password is required"}));
-                }
-
-                const result = await db.collection("users").updateOne({username}, {$set: {password: password.trim()}});
-
-                if (result.matchedCount === 0) {
-                    res.writeHead(404, {"Content-Type": "application/json"});
-                    return res.end(JSON.stringify({error: "User not found"}));
-                }
-
-                res.writeHead(200, {"Content-Type": "application/json"});
-                return res.end(JSON.stringify({success: true}));
             }
 
             let filePath;
