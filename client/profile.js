@@ -1,15 +1,17 @@
+import { api } from './api.js'
+
 export async function showProfile(username) {
     const contentSection = document.querySelector("section.content")
     const title = document.querySelector(".general-title")
 
     title.textContent = "Profile"
 
-    const res = await fetch(
-        `http://localhost:8080/users/${encodeURIComponent(username)}`
-    )
-    if (!res.ok) return alert("Failed to load profile")
-
-    const user = await res.json()
+    let user
+    try {
+        user = await api.getUser(username)
+    } catch (error) {
+        return alert("Failed to load profile")
+    }
 
     contentSection.innerHTML = `
         <div class="profile-section">
@@ -45,17 +47,13 @@ export async function showProfile(username) {
         const newPassword = document.getElementById("profile-password").value
         if (!newPassword) return alert("Password cannot be empty")
 
-        const res = await fetch(
-            `http://localhost:8080/users/${encodeURIComponent(username)}`,
-            {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password: newPassword })
-            }
-        )
-        res.ok 
-            ? (alert("Password updated successfully"), document.getElementById("profile-password").value = "") 
-            : alert("Failed to update password")
+        const success = await api.updateUserPassword(username, newPassword)
+        if (success) {
+            alert("Password updated successfully")
+            document.getElementById("profile-password").value = ""
+        } else {
+            alert("Failed to update password")
+        }
     })
 
     document.getElementById("logout-btn").addEventListener("click", () => {

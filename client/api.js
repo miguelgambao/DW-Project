@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000'
+const API_BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8080'
 
 const isElectron = () => typeof window !== 'undefined' && window.api !== undefined
 
@@ -25,5 +25,20 @@ export const api = {
               })
                   .then(res => res.json())
                   .then(data => data.userId || null)
+    },
+
+    async getUser(username) {
+        const res = await fetch(`${API_BASE_URL}/users/${encodeURIComponent(username)}`)
+        if (!res.ok) throw new Error('Failed to load profile')
+        return await res.json()
+    },
+
+    async updateUserPassword(username, password) {
+        const res = await fetch(`${API_BASE_URL}/users/${encodeURIComponent(username)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        })
+        return res.ok
     },
 }
