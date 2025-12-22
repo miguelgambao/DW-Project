@@ -2,11 +2,12 @@
 
 Pomodoro productivity app with tasks, calendar events, a dashboard with insights, and a simple Electron desktop client backed by a Node.js + MongoDB API.
 
-(assets/images/dashboard.png)
-(assets/images/pomodoro.png)
-(assets/images/tasks.png)
-(assets/images/calendar.png)
-(assets/images/profile.png)
+![Dashboard](assets/images/dashboard.png)
+![Pomodoro Timer](assets/images/pomodoro.png)
+![Tasks](assets/images/tasks.png)
+![Calendar](assets/images/calendar.png)
+![Profile](assets/images/profile.png)
+
 
 ## Prerequisites
 
