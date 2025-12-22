@@ -4,7 +4,8 @@ export async function showProfile(username) {
     const contentSection = document.querySelector("section.content")
     const title = document.querySelector(".general-title")
 
-    title.textContent = "Profile"
+    if (title) title.textContent = "Profile"
+    if (!contentSection) return
 
     let user
     try {

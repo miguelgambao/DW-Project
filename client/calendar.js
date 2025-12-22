@@ -97,7 +97,8 @@ export function showCalendar(username, referenceDate = new Date()) {
                     user_email: username
                 };
 
-                const response = await fetch("/calendar-events", {
+                const API_BASE = window.location.origin;
+                const response = await fetch(`${API_BASE}/calendar-events`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(eventData)
