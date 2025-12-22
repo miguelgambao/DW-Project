@@ -274,7 +274,6 @@ aside img {
   border: 1px solid var(--light-green-secondary);
 }
 
-/* Prevent long descriptions from stretching the table */
 .task-description, .task-title{
   display: inline-block;
   max-width: 28ch;
