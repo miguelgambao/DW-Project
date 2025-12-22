@@ -61,11 +61,35 @@ function getModeLabel(mode) {
 }
 
 function showNotification(title, body) {
-  // Use Electron notification if available, otherwise fallback to browser alert
+  // Use Electron notification if available
   if (window.api && window.api.showNotification) {
     window.api.showNotification(title, body);
-  } else {
+  } 
+  // Otherwise use browser Notification API
+  else if ('Notification' in window) {
+    // Check if permission is granted
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body, icon: 'assets/icons/icon.png' });
+    } 
+    // Request permission if not determined
+    else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification(title, { body, icon: 'assets/icons/icon.png' });
+        }
+      });
+    }
+  } 
+  // Fallback to alert if Notification API not supported
+  else {
     alert(`${title}\n${body}`);
+  }
+}
+
+// Request notification permission when page loads (for web version)
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
   }
 }
 
@@ -164,6 +188,14 @@ function switchMode(mode) {
 function updateDisplay() {
   if (timerDisplay) {
     timerDisplay.textContent = formatTime(timeRemaining);
+  }
+  
+  // Update document title with time remaining only when timer is active
+  if (isRunning) {
+    const modePrefix = currentMode === 'pomodoro' ? '🍅' : '☕';
+    document.title = `${formatTime(timeRemaining)} ${modePrefix} - Podoro`;
+  } else {
+    document.title = 'Podoro';
   }
   
   updateDashboardWidget();
@@ -399,6 +431,9 @@ export function showPomodoroPage() {
   
   // Initialize event listeners
   initializeEventListeners(elements);
+  
+  // Request notification permission on page load (for web version)
+  requestNotificationPermission();
   
   // Update display with current state
   updateDisplay();
