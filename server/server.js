@@ -104,6 +104,12 @@ async function startServer() {
 
             if (method === "POST" && reqUrl === "/tasks") {
                 const data = await parseBody(req);
+                
+                if (!data.title || !data.user_email) {
+                    res.writeHead(400);
+                    return res.end(JSON.stringify({error: "Missing required fields: title and user_email"}));
+                }
+
                 const now = new Date().toISOString().split("T")[0];
 
                 const task = {
@@ -125,14 +131,24 @@ async function startServer() {
             if (method === "PATCH" && reqUrl === "/tasks/toggle") {
                 const {taskId, completed} = await parseBody(req);
 
-                await db
-                .collection("tasks")
-                .updateOne(
-                    {_id: new ObjectId(taskId)},
-                    {$set: {completed, updated_at: new Date().toISOString().split("T")[0]}}
-                );
+                if (!taskId) {
+                    res.writeHead(400);
+                    return res.end(JSON.stringify({error: "Missing taskId"}));
+                }
 
-                return res.end(JSON.stringify({success: true}));
+                try {
+                    await db
+                    .collection("tasks")
+                    .updateOne(
+                        {_id: new ObjectId(taskId)},
+                        {$set: {completed, updated_at: new Date().toISOString().split("T")[0]}}
+                    );
+
+                    return res.end(JSON.stringify({success: true}));
+                } catch (error) {
+                    res.writeHead(400);
+                    return res.end(JSON.stringify({error: "Invalid taskId format"}));
+                }
             }
 
             if (method === "POST" && reqUrl === "/calendar-events") {
