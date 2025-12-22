@@ -1,6 +1,9 @@
 import { loadWeekEvents } from "./utilities/loadWeekEvents.js";
 import { Modal } from "./utilities/modal.js";
 
+/* ===== CONFIG ===== */
+const API_BASE = "http://10.17.0.28:8080";
+
 export function showCalendar(username, referenceDate = new Date()) {
     const contentSection = document.querySelector("section.content");
     const title = document.querySelector(".general-title");
@@ -17,11 +20,8 @@ export function showCalendar(username, referenceDate = new Date()) {
 
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-    const startOfWeek = new Date(referenceDate);
-    startOfWeek.setDate(referenceDate.getDate() - referenceDate.getDay());
-
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    const startOfWeek = new Date(weekStart);
+    const endOfWeek = new Date(weekEnd);
 
     const weekHeader =
         startOfWeek.getMonth() === endOfWeek.getMonth()
@@ -63,11 +63,17 @@ export function showCalendar(username, referenceDate = new Date()) {
         </div>
     `;
 
-    document.getElementById("prev-week").onclick = () =>
-        showCalendar(username, new Date(startOfWeek.setDate(startOfWeek.getDate() - 7)));
+    document.getElementById("prev-week").onclick = () => {
+        const d = new Date(startOfWeek);
+        d.setDate(d.getDate() - 7);
+        showCalendar(username, d);
+    };
 
-    document.getElementById("next-week").onclick = () =>
-        showCalendar(username, new Date(startOfWeek.setDate(startOfWeek.getDate() + 7)));
+    document.getElementById("next-week").onclick = () => {
+        const d = new Date(startOfWeek);
+        d.setDate(d.getDate() + 7);
+        showCalendar(username, d);
+    };
 
     document.getElementById("today-btn").onclick = () =>
         showCalendar(username, new Date());
@@ -87,7 +93,6 @@ export function showCalendar(username, referenceDate = new Date()) {
 
         setTimeout(() => {
             document.getElementById("save-event").onclick = async () => {
-
                 const eventData = {
                     title: document.getElementById("event-title").value,
                     description: document.getElementById("event-description").value,
@@ -97,15 +102,13 @@ export function showCalendar(username, referenceDate = new Date()) {
                     user_email: username
                 };
 
-                const API_BASE = window.location.origin;
-                const response = await fetch(`${API_BASE}/calendar-events`, {
+                const res = await fetch(`${API_BASE}/calendar-events`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(eventData)
                 });
 
-                if (response.ok) {
-                    alert("Event created!");
+                if (res.ok) {
                     showCalendar(username, referenceDate);
                 } else {
                     alert("Failed to create event");
@@ -115,7 +118,7 @@ export function showCalendar(username, referenceDate = new Date()) {
     };
 
     loadWeekEvents(username, weekStart, weekEnd).then(events => {
-        renderWeekEvents(events, new Date(weekStart), document.querySelector(".weekly-grid"));
+        renderWeekEvents(events, startOfWeek, document.querySelector(".weekly-grid"));
     });
 }
 
@@ -139,18 +142,22 @@ function renderWeekEvents(events, weekStart, calendarGrid) {
 
     events.forEach(event => {
         const start = new Date(event.start_time);
-        const end = new Date(event.end_time);
 
-        const dayIndex = start.getDay();
-        const hour = start.getHours();
-        const cellIndex = hour * 7 + dayIndex;
+        const dayIndex = start.getDay();   // 0–6
+        const hour = start.getHours();     // 0–23
+        const index = hour * 7 + dayIndex;
 
-        const cell = cells[cellIndex];
+        const cell = cells[index];
         if (!cell) return;
 
         const el = document.createElement("div");
         el.className = "calendar-event";
         el.textContent = event.title;
+
+        el.style.position = "absolute";
+        el.style.top = "2px";
+        el.style.left = "2px";
+        el.style.right = "2px";
 
         cell.style.position = "relative";
         cell.appendChild(el);
