@@ -28,17 +28,25 @@ export const api = {
     },
 
     async getUser(username) {
-        const res = await fetch(`${API_BASE_URL}/users/${encodeURIComponent(username)}`)
-        if (!res.ok) throw new Error('Failed to load profile')
-        return await res.json()
+        return isElectron()
+            ? await window.api.getUser(username)
+            : (async () => {
+                const res = await fetch(`${API_BASE_URL}/users/${encodeURIComponent(username)}`)
+                if (!res.ok) throw new Error('Failed to load profile')
+                return await res.json()
+            })();
     },
 
     async updateUserPassword(username, password) {
-        const res = await fetch(`${API_BASE_URL}/users/${encodeURIComponent(username)}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
-        })
-        return res.ok
+        return isElectron()
+            ? await window.api.updateUserPassword(username, password)
+            : (async () => {
+                const res = await fetch(`${API_BASE_URL}/users/${encodeURIComponent(username)}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                })
+                return res.ok
+            })();
     },
 }

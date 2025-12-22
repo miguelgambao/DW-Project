@@ -1,6 +1,47 @@
 const { app, ipcMain, BrowserWindow, Notification, screen } = require("electron");
 const path = require("path");
-const { createUser, loginUser } = require("./client/login");
+  const { createUser, loginUser } = require("./client/login");
+  const { MongoClient } = require("mongodb");
+  const url = "mongodb://localhost:27017";
+  const dbName = "pomodoro_app";
+  const withDB = async (fn) => {
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    try {
+      return await fn(db);
+    } finally {
+      client.close();
+    }
+  };
+  ipcMain.handle("get-user", async (event, username) => {
+    return await withDB(async (db) => {
+      const user = await db.collection("users").findOne({
+        $or: [
+          { username: username.trim().toLowerCase() },
+          { email: username.trim().toLowerCase() }
+        ]
+      });
+      if (!user) throw new Error("User not found");
+      return { username: user.username || user.email };
+    });
+  });
+
+  ipcMain.handle("update-user-password", async (event, username, password) => {
+    return await withDB(async (db) => {
+      const result = await db.collection("users").updateOne(
+        {
+          $or: [
+            { username: username.trim().toLowerCase() },
+            { email: username.trim().toLowerCase() }
+          ]
+        },
+        { $set: { password: password.trim() } }
+      );
+      if (result.matchedCount === 0) throw new Error("User not found");
+      return { success: true };
+    });
+  });
 
 let mainWindow = null;
 let widgetWindow = null;

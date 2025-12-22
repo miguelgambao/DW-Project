@@ -3,6 +3,8 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
     createUser: (email, password) => ipcRenderer.invoke('create-user', email, password),
     loginUser: (email, password) => ipcRenderer.invoke('login-user', email, password),
+    getUser: (username) => ipcRenderer.invoke('get-user', username),
+    updateUserPassword: (username, password) => ipcRenderer.invoke('update-user-password', username, password),
     showNotification: (title, body) => ipcRenderer.invoke('show-notification', title, body),
     updateWidget: (timerData) => ipcRenderer.invoke('update-widget', timerData),
     showMainWindow: () => ipcRenderer.invoke('show-main-window'),
