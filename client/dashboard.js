@@ -1,8 +1,8 @@
 import { PieChart } from "./utilities/pie_chart.js";
+import { API_CONFIG } from "./config.js";
 
 export async function showDashboardTasks(userEmail) {
   const contentSection = document.querySelector(".content");
-  const API_BASE = window.location.origin;
 
   if (!contentSection) {
     console.error("Content section not found");
@@ -11,7 +11,7 @@ export async function showDashboardTasks(userEmail) {
 
   try {
     const res = await fetch(
-      `${API_BASE}/tasks?user_email=${encodeURIComponent(userEmail)}`
+      `${API_CONFIG.BASE_URL}/tasks?user_email=${encodeURIComponent(userEmail)}`
     );
 
     if (!res.ok) {
