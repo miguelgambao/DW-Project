@@ -43,6 +43,14 @@ window.addEventListener("DOMContentLoaded", () => {
     const registerUI = RegisterUI();
     const savedUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
+    // Hide title bar in browser version
+    if (!isElectron) {
+        const titleBar = document.querySelector(".titleBar");
+        if (titleBar) {
+            titleBar.style.display = "none";
+        }
+    }
+
     if (savedUser) {
         showDashboard(savedUser.email);
         return;
