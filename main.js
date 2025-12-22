@@ -29,8 +29,8 @@ async function createWindow() {
 
   mainWindow = new BrowserWindow(windowOptions);
   // use for testing locally on electron 
-  //mainWindow.loadURL("http://localhost:8080");
-  mainWindow.loadURL("http://10.17.0.28:8080");
+  mainWindow.loadURL("http://localhost:8080");
+  //mainWindow.loadURL("http://10.17.0.28:8080");
   
   mainWindow.on("minimize", () => {
     widgetManuallyClosed = false;
