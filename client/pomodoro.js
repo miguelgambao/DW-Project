@@ -1,4 +1,3 @@
-// Constants
 const SECONDS_PER_MINUTE = 60;
 const MIN_DURATION = 1;
 const MAX_DURATION = 120;
@@ -8,21 +7,18 @@ const DEFAULT_DURATIONS = {
   longBreak: 15
 };
 
-// State variables
 let timerInterval = null;
 let timeRemaining = DEFAULT_DURATIONS.pomodoro * SECONDS_PER_MINUTE;
 let isRunning = false;
 let currentMode = 'pomodoro';
 const durations = { ...DEFAULT_DURATIONS };
-let pomodoroCount = 0; // Track completed pomodoros
-let longBreakInterval = 3; // Number of short breaks before long break
-let autoStart = false; // Auto-start next timer when current one completes
+let pomodoroCount = 0; 
+let longBreakInterval = 3; 
+let autoStart = false; 
 
-// DOM element references
 let startBtn = null;
 let timerDisplay = null;
 
-// Helper functions
 function formatTime(totalSeconds) {
   const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
   const seconds = totalSeconds % SECONDS_PER_MINUTE;
@@ -42,7 +38,6 @@ function isValidInterval(value) {
 function updateButtonText(text) {
   if (startBtn) {
     startBtn.textContent = text;
-    // Add paused class when button shows Start/Resume
     if (text === 'Start' || text === 'Resume') {
       startBtn.classList.add('paused');
     } else {
@@ -61,17 +56,13 @@ function getModeLabel(mode) {
 }
 
 function showNotification(title, body) {
-  // Use Electron notification if available
   if (window.api && window.api.showNotification) {
     window.api.showNotification(title, body);
   } 
-  // Otherwise use browser Notification API
   else if ('Notification' in window) {
-    // Check if permission is granted
     if (Notification.permission === 'granted') {
       new Notification(title, { body, icon: 'assets/icons/icon.png' });
     } 
-    // Request permission if not determined
     else if (Notification.permission !== 'denied') {
       Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
@@ -80,22 +71,18 @@ function showNotification(title, body) {
       });
     }
   } 
-  // Fallback to alert if Notification API not supported
   else {
     alert(`${title}\n${body}`);
   }
 }
 
-// Request notification permission when page loads (for web version)
 function requestNotificationPermission() {
   if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
 }
 
-// Timer functions
 function startTimer() {
-  // Clear any existing interval to prevent piling up
   if (timerInterval) {
     clearInterval(timerInterval);
   }
@@ -119,7 +106,6 @@ function handleTimerComplete() {
   if (currentMode === 'pomodoro') {
     pomodoroCount++;
     
-    // Check if it's time for a long break
     if (pomodoroCount % longBreakInterval === 0) {
       showNotification('Pomodoro Complete!', 'Time for a long break.');
       currentMode = 'longBreak';
@@ -139,19 +125,18 @@ function handleTimerComplete() {
     updateActiveModeButton();
   } else if (currentMode === 'longBreak') {
     showNotification('Long Break Complete!', 'Starting fresh cycle.');
-    pomodoroCount = 0; // Reset counter after long break
+    pomodoroCount = 0;
     currentMode = 'pomodoro';
     timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
     updateDisplay();
     updateActiveModeButton();
   }
   
-  // Auto-start next timer if enabled
   if (autoStart) {
     setTimeout(() => {
       startTimer();
       updateButtonText('Pause');
-    }, 1000); // Small delay before auto-starting
+    }, 1000); 
   }
 }
 
@@ -190,7 +175,6 @@ function updateDisplay() {
     timerDisplay.textContent = formatTime(timeRemaining);
   }
   
-  // Update document title with time remaining only when timer is active
   if (isRunning) {
     const modePrefix = currentMode === 'pomodoro' ? '🍅' : '☕';
     document.title = `${formatTime(timeRemaining)} ${modePrefix} - Podoro`;
@@ -213,7 +197,6 @@ function updateDashboardWidget() {
   
   if (dashboardBtn) {
     dashboardBtn.textContent = isRunning ? 'Pause' : 'Start';
-    // Add paused class when stopped
     if (isRunning) {
       dashboardBtn.classList.remove('paused');
     } else {
@@ -248,13 +231,11 @@ function updateWidgetWindow() {
   }
 }
 
-// Make updateWidgetWindow globally accessible for main process
 if (typeof window !== 'undefined') {
   window.updateWidgetWindow = updateWidgetWindow;
   window.isTimerRunning = () => isRunning;
 }
 
-// Event handlers
 function handleStartClick() {
   if (isRunning) {
     pauseTimer();
@@ -308,7 +289,6 @@ function handleSaveSettings(pomodoroInput, shortBreakInput, longBreakInput, long
   alert('Settings saved!');
 }
 
-// DOM initialization
 function initializeEventListeners(elements) {
   const { startBtn, resetBtn, modeBtns, pomodoroInput, shortBreakInput, longBreakInput, longBreakIntervalInput, saveSettingsBtn, autoStartCheckbox } = elements;
 
@@ -341,14 +321,6 @@ function getDOMElements() {
     saveSettingsBtn: document.getElementById('saveSettingsBtn'),
     autoStartCheckbox: document.getElementById('autoStartCheckbox')
   };
-}
-
-function resetTimerState() {
-  clearInterval(timerInterval);
-  currentMode = 'pomodoro';
-  timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
-  isRunning = false;
-  pomodoroCount = 0;
 }
 
 export function getTimerState() {
@@ -425,17 +397,13 @@ export function showPomodoroPage() {
 
   const elements = getDOMElements();
   
-  // Assign to module-level variables
   startBtn = elements.startBtn;
   timerDisplay = elements.timerDisplay;
-  
-  // Initialize event listeners
+
   initializeEventListeners(elements);
-  
-  // Request notification permission on page load (for web version)
+
   requestNotificationPermission();
   
-  // Update display with current state
   updateDisplay();
   updateActiveModeButton();
   updateButtonText(isRunning ? 'Pause' : 'Start');
