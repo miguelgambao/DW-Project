@@ -240,7 +240,50 @@ async function startServer() {
                 return;
             }
 
-            // --- STATIC FILES ---
+            if (method === "GET" && reqUrl.startsWith("/users/")) {
+    const username = decodeURIComponent(reqUrl.split("/")[2])
+        .trim()
+        .toLowerCase();
+
+    const user = await db.collection("users").findOne({ username });
+
+    if (!user) {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ error: "User not found" }));
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(
+        JSON.stringify({
+            username: user.username
+        })
+    );
+}
+
+            if (method === "PATCH" && reqUrl.startsWith("/users/")) {
+    const username = decodeURIComponent(reqUrl.split("/")[2]).trim().toLowerCase();
+    const { password } = await parseBody(req);
+
+    if (!password) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ error: "Password is required" }));
+    }
+
+    const result = await db.collection("users").updateOne(
+        { username },
+        { $set: { password: password.trim() } }
+    );
+
+    if (result.matchedCount === 0) {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ error: "User not found" }));
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify({ success: true }));
+}
+
+
             let filePath = reqUrl === "/" ? "index.html" : reqUrl.slice(1);
             filePath = path.join(__dirname, filePath);
 
