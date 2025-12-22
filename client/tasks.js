@@ -1,3 +1,5 @@
+import { Modal } from "./utilities/modal.js";
+
 export function showTasks(username) {
     const contentSection = document.querySelector("section.content");
     const title = document.querySelector(".general-title");
@@ -71,16 +73,14 @@ export function showTasks(username) {
             return;
         }
 
-        tasks.forEach(task => {
-    const tr = document.createElement("tr");
+        tasks.forEach((task) => {
+            const tr = document.createElement("tr");
 
-    const stateLabel = task.completed ? "Completed" : "Pending";
-    const dueDateTime = task.due_date
-        ? `${task.due_date} ${task.due_time || ""}`
-        : "";
+            const stateLabel = task.completed ? "Completed" : "Pending";
+            const dueDateTime = task.due_date ? `${task.due_date} ${task.due_time || ""}` : "";
 
-    tr.innerHTML = `
-        <td>${task.title}</td>
+            tr.innerHTML = `
+        <td><span class="task-title" title="${task.title || ""}">${task.title || ""}</span></td>
         <td>
             <label style="display:flex; align-items:center; gap:6px;">
                 <input
@@ -94,30 +94,28 @@ export function showTasks(username) {
                 </span>
             </label>
         </td>
-        <td>${task.description}</td>
+        <td><span class="task-description" title="${task.description || ""}">${task.description || ""}</span></td>
         <td>${dueDateTime}</td>
     `;
 
-    tbody.appendChild(tr);
-});
-        tbody.querySelectorAll(".task-completed-checkbox").forEach(checkbox => {
-    checkbox.addEventListener("change", async (e) => {
-        const taskId = Number(e.target.dataset.id);
-        const completed = e.target.checked;
-
-        await fetch("http://localhost:3000/tasks/toggle", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ taskId, completed })
+            tbody.appendChild(tr);
         });
+        tbody.querySelectorAll(".task-completed-checkbox").forEach((checkbox) => {
+            checkbox.addEventListener("change", async (e) => {
+                const taskId = Number(e.target.dataset.id);
+                const completed = e.target.checked;
 
-        // Atualizar label visual
-        const span = e.target.nextElementSibling;
-        span.textContent = completed ? "Completed" : "Pending";
-        span.className = completed ? "state-done" : "state-pending";
-    });
-});
+                await fetch("http://localhost:3000/tasks/toggle", {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({taskId, completed}),
+                });
 
+                const span = e.target.nextElementSibling;
+                span.textContent = completed ? "Completed" : "Pending";
+                span.className = completed ? "state-done" : "state-pending";
+            });
+        });
 
         currentPage++;
         loading = false;
@@ -130,6 +128,71 @@ export function showTasks(username) {
         loadTasks(true);
     });
 
-    // primeira carga
     loadTasks();
+
+    document.getElementById("add-task").addEventListener("click", () => {
+        Modal({
+            title: "New Task",
+            content: `
+    <div class="modal-form-group">
+      <div>
+        <label>Title</label>
+        <input type="text" id="task-title" class="input-primary fill-container" />
+      </div>
+
+      <div>
+        <label>Description</label>
+        <input type="text" id="task-description" class="input-primary fill-container" />
+      </div>
+
+      <div class="datetime-container">
+        <div class="datetime-input">
+          <label>Due date</label>
+          <input type="date" id="task-due-date" class="input-secondary" />
+        </div>
+
+        <div class="datetime-input">
+          <label>Due time</label>
+          <input type="time" id="task-due-time" class="input-secondary" />
+        </div>
+      </div>
+
+      <button type="button" class="button-primary Smaller" id="save-task">
+        Save
+      </button>
+    </div>
+  `,
+        });
+
+        setTimeout(() => {
+            const saveBtn = document.getElementById("save-task");
+
+            saveBtn.addEventListener("click", async () => {
+                const taskData = {
+                    title: document.getElementById("task-title").value,
+                    description: document.getElementById("task-description").value,
+                    due_date: document.getElementById("task-due-date").value,
+                    due_time: document.getElementById("task-due-time").value,
+                    user_email: username,
+                };
+
+                const response = await fetch("http://localhost:3000/tasks", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(taskData),
+                });
+
+                if (response.ok) {
+                    alert("Task created!");
+
+                    // reset & reload list
+                    currentPage = 1;
+                    tbody.innerHTML = "";
+                    loadTasks(true);
+                } else {
+                    alert("Failed to create task");
+                }
+            });
+        }, 0);
+    });
 }
