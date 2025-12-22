@@ -43,6 +43,13 @@ window.addEventListener("DOMContentLoaded", () => {
     const registerUI = RegisterUI();
     const savedUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
+    if (!isElectron) {
+        const titleBar = document.querySelector(".titleBar");
+        if (titleBar) {
+            titleBar.style.display = "none";
+        }
+    }
+
     if (savedUser) {
         showDashboard(savedUser.email);
         return;
@@ -96,11 +103,26 @@ window.addEventListener("DOMContentLoaded", () => {
                 <aside>
                     <img src="assets/media/logoHorizontal.svg" alt="">
                     <nav class="aside-nav">
-                        <button class="button-terciary M" id="dashboardBtn">Dashboard</button>
-                        <button class="button-terciary M" id="calendarBtn">Calendar</button>
-                        <button class="button-terciary M" id="tasksBtn">Tasks</button>
-                        <button class="button-terciary M" id="pomodoroBtn">Pomodoro</button>
-                        <button class="button-terciary M" id="profileBtn">Profile</button>
+                        <button class="button-terciary M" id="dashboardBtn">
+                            <img src="assets/icons/dashboard.svg" alt="">
+                            Dashboard
+                        </button>
+                        <button class="button-terciary M" id="calendarBtn">
+                            <img src="assets/icons/calendar.svg" alt="">
+                            Calendar
+                        </button>
+                        <button class="button-terciary M" id="tasksBtn">
+                            <img src="assets/icons/tasks.svg" alt="">
+                            Tasks
+                        </button>
+                        <button class="button-terciary M" id="pomodoroBtn">
+                            <img src="assets/icons/alarm-clock.svg" alt="">
+                            Pomodoro
+                        </button>
+                        <button class="button-terciary M" id="profileBtn">
+                            <img src="assets/icons/profile.svg" alt="">
+                            Profile
+                        </button>
                     </nav>
                 </aside>
                 <div>
@@ -111,11 +133,18 @@ window.addEventListener("DOMContentLoaded", () => {
         `;
 
         showDashboardTasks(username);
+        dashboardSection.querySelector("#dashboardBtn").classList.add("active");
 
-        // Navigation handlers
+        const setActiveNavButton = (buttonId) => {
+            const navButtons = dashboardSection.querySelectorAll(".aside-nav .button-terciary");
+            navButtons.forEach(btn => btn.classList.remove("active"));
+            dashboardSection.querySelector(`#${buttonId}`).classList.add("active");
+        };
+
         dashboardSection
             .querySelector("#dashboardBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("dashboardBtn");
                 document.getElementById("page-title").textContent = "Dashboard";
                 showDashboardTasks(username);
             });
@@ -123,6 +152,7 @@ window.addEventListener("DOMContentLoaded", () => {
         dashboardSection
             .querySelector("#calendarBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("calendarBtn");
                 document.getElementById("page-title").textContent = "Calendar";
                 showCalendar(username, new Date());
             });
@@ -130,6 +160,7 @@ window.addEventListener("DOMContentLoaded", () => {
         dashboardSection
             .querySelector("#tasksBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("tasksBtn");
                 document.getElementById("page-title").textContent = "Tasks";
                 showTasks(username);
             });
@@ -137,12 +168,14 @@ window.addEventListener("DOMContentLoaded", () => {
         dashboardSection
             .querySelector("#profileBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("profileBtn");
                 showProfile(username);
             });
 
         dashboardSection
             .querySelector("#pomodoroBtn")
             .addEventListener("click", () => {
+                setActiveNavButton("pomodoroBtn");
                 document.getElementById("page-title").textContent = "Pomodoro";
                 showPomodoroPage();
             });
