@@ -177,7 +177,13 @@ async function startServer() {
             }
 
             if (method === "GET" && reqUrl.startsWith("/users/")) {
-                const username = decodeURIComponent(reqUrl.split("/")[2]).trim().toLowerCase();
+                const urlPath = reqUrl.split("?")[0]; // Remove query parameters
+                const username = decodeURIComponent(urlPath.split("/")[2] || "").trim().toLowerCase();
+
+                if (!username) {
+                    res.writeHead(400, {"Content-Type": "application/json"});
+                    return res.end(JSON.stringify({error: "Username is required"}));
+                }
 
                 const user = await db.collection("users").findOne({username});
 
@@ -195,7 +201,8 @@ async function startServer() {
             }
 
             if (method === "PATCH" && reqUrl.startsWith("/users/")) {
-                const username = decodeURIComponent(reqUrl.split("/")[2]).trim().toLowerCase();
+                const urlPath = reqUrl.split("?")[0]; // Remove query parameters
+                const username = decodeURIComponent(urlPath.split("/")[2] || "").trim().toLowerCase();
                 const {password} = await parseBody(req);
 
                 if (!password) {
