@@ -164,16 +164,25 @@ async function startServer() {
                 const weekStart = new Date(urlObj.searchParams.get("week_start"));
                 const weekEnd = new Date(urlObj.searchParams.get("week_end"));
 
-                const events = await db
-                .collection("events")
-                .find({
-                    user_email: userEmail,
-                    start_time: {$lte: weekEnd},
-                    end_time: {$gte: weekStart},
-                })
-                .toArray();
+                                const events = await db
+                                    .collection("events")
+                                    .find({
+                                        user_email: userEmail,
+                                        start_time: { $lte: weekEnd },
+                                        end_time: { $gte: weekStart },
+                                    })
+                                    .toArray();
 
-                return res.end(JSON.stringify(events));
+                                console.log(" Events fetched:", events);
+
+                                console.log(
+                                    `Calendar events for ${userEmail} (${weekStart} → ${weekEnd}):`,
+                                    events
+                                );
+
+                                res.writeHead(200, { "Content-Type": "application/json" });
+                                res.end(JSON.stringify(events));
+                                return;
             }
 
             if (reqUrl.startsWith("/users/") && !reqUrl.endsWith(".js") && !reqUrl.endsWith(".css")) {
