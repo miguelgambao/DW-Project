@@ -183,6 +183,11 @@ aside img {
 
 .tasks-table{
   width: 100%;
+  border-collapse: collapse;
+}
+
+.tasks-table tr{
+  border: 1px solid var(--light-green-secondary);
 }
 
 .tasks-table th{
@@ -191,9 +196,15 @@ aside img {
   padding: 0.65rem 1rem;
   font-size: var(--font-size-button-M);
   font-weight: normal;
-  border-top-left-radius: var(--border-radius);
-  border-top-right-radius: var(--border-radius);
   text-align: left;
+}
+
+.tasks-table thead tr:first-child th:first-child {
+  border-top-left-radius: var(--border-radius);
+}
+
+.tasks-table thead tr:first-child th:last-child {
+  border-top-right-radius: var(--border-radius);
 }
 
 .tasks-table td{
@@ -202,13 +213,24 @@ aside img {
   padding: 0.65rem 1rem;
   font-size: var(--font-size-button-M);
   margin:0;
+  border: 1px solid var(--light-green-secondary);
 }
 
-.tasks-table tr:last-child td:first-child {
+/* Prevent long descriptions from stretching the table */
+.task-description, .task-title{
+  display: inline-block;
+  max-width: 28ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.tasks-table tbody tr:last-child td:first-child {
   border-bottom-left-radius: var(--border-radius);
 }
 
-.tasks-table tr:last-child td:last-child {
+.tasks-table tbody tr:last-child td:last-child {
   border-bottom-right-radius: var(--border-radius);
 }
 
@@ -331,7 +353,7 @@ label{
 
 .paragraph-small{
   font-size: var(--font-size-p-small);
-  color: var(--black)
+  color: var(--black);
 }
 
 .button-terciary{
@@ -359,3 +381,18 @@ h2{
   align-items: center;
 }
 
+.state-done {
+    color: var(--dark-green);
+    font-weight: 600;
+}
+
+.state-pending {
+    color: orange;
+    font-weight: 600;
+}
+
+.tasks-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
