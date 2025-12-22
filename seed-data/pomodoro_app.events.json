@@ -1,0 +1,80 @@
+[{
+  "_id": 50,
+  "title": "Team Meeting",
+  "description": "Discuss project",
+  "start_time": "2024-12-28T09:00:00",
+  "end_time": "2024-12-28T10:00:00",
+  "all_day": false,
+  "user_email": "user@example.com"
+},
+{
+  "_id": 51,
+  "title": "Teammm Meeting",
+  "description": "fix project",
+  "start_time": "2025-12-18T09:00:00",
+  "end_time": "2025-12-19T10:00:00",
+  "all_day": false,
+  "user_email": "user@example.com"
+},
+{
+  "_id": 52,
+  "title": "Party",
+  "description": "Drinks and food",
+  "start_time": "2025-12-17T09:00:00",
+  "end_time": "2025-12-17T10:00:00",
+  "all_day": false,
+  "user_email": "user@example.com"
+},
+{
+  "_id": 53,
+  "title": "Party2",
+  "description": "Drinks and food2",
+  "start_time": "2025-12-22T09:00:00",
+  "end_time": "2025-12-22T10:00:00",
+  "all_day": false,
+  "user_email": "user@example.com"
+},
+{
+  "_id": {
+    "$oid": "69474c239dc1cef7e22db094"
+  },
+  "title": "cdc",
+  "description": "rcece",
+  "start_time": "2025-12-22T01:23",
+  "end_time": "2025-12-22T01:23",
+  "all_day": true,
+  "user_email": "user@example.com"
+},
+{
+  "_id": {
+    "$oid": "69474e1a9dc1cef7e22db095"
+  },
+  "title": "",
+  "description": "",
+  "start_time": "2025-12-22T01:32",
+  "end_time": "2025-12-22T05:32",
+  "all_day": false,
+  "user_email": "user@example.com"
+},
+{
+  "_id": {
+    "$oid": "69474f289dc1cef7e22db096"
+  },
+  "title": "ferfe",
+  "description": "feefefe",
+  "start_time": "2025-12-27T00:00",
+  "end_time": "2025-12-27T23:59",
+  "all_day": true,
+  "user_email": "user@example.com"
+},
+{
+  "_id": {
+    "$oid": "6947554faee9c7ece4196540"
+  },
+  "title": "bithc",
+  "description": "dee",
+  "start_time": "2025-12-24T00:00",
+  "end_time": "2025-12-24T23:59",
+  "all_day": true,
+  "user_email": "user@example.com"
+}]

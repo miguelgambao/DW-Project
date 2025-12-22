@@ -1,5 +1,11 @@
 # DW-Project
 
+## Project Description
+
+Pomodoro productivity app with tasks, calendar events, a dashboard with insights, and a simple Electron desktop client backed by a Node.js + MongoDB API.
+
+![App Screenshot](assets/media/app-screenshot.png)
+
 ## Prerequisites
 
 - Node.js and npm — verify with `node -v` and `npm -v`
@@ -22,6 +28,15 @@ npm install
 ```
 
 The main dependencies are `electron` and `mongodb` (used by the server).
+
+## Configuration
+
+- Copy [client/config.example.js](client/config.example.js) to [client/config.js](client/config.js).
+- Set `isDevelopment` according to where the API lives:
+  - `true` → local API at `http://localhost:8080`
+  - `false` → live server at `http://10.17.0.28:8080`
+
+The frontend uses `API_CONFIG.BASE_URL` for all fetch calls.
 
 # Start MongoDB (before seeding)
 
@@ -76,6 +91,54 @@ mongoimport --db pomodoro_app --collection events --file seed-data/events.json -
 ```
 
 By default the server connects to `mongodb://localhost:27017` and uses the `pomodoro_app` database.
+ 
+### Seed helper scripts (optional)
+
+Save these as files under a `scripts/` folder if you prefer one-command import/export. These scripts assume local MongoDB on `mongodb://localhost:27017` and operate on the `pomodoro_app` database.
+
+Import script (`scripts/import_seed.sh`):
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+DB="pomodoro_app"
+MONGO_URI="${MONGO_URI:-mongodb://localhost:27017}"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+SEED_DIR="$ROOT_DIR/seed-data"
+
+echo "Importing seed data into $MONGO_URI/$DB..."
+
+mongoimport --uri "$MONGO_URI" --db "$DB" --collection users --file "$SEED_DIR/users.json" --jsonArray --drop
+mongoimport --uri "$MONGO_URI" --db "$DB" --collection tasks --file "$SEED_DIR/tasks.json" --jsonArray --drop
+mongoimport --uri "$MONGO_URI" --db "$DB" --collection pomodoro_sessions --file "$SEED_DIR/pomodoro_sessions.json" --jsonArray --drop
+mongoimport --uri "$MONGO_URI" --db "$DB" --collection events --file "$SEED_DIR/events.json" --jsonArray --drop
+
+echo "Done."
+```
+
+Export script (`scripts/export_db.sh`) using `mongoexport`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+DB="pomodoro_app"
+MONGO_URI="${MONGO_URI:-mongodb://localhost:27017}"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+OUT_DIR="$ROOT_DIR/seed-data"
+
+mkdir -p "$OUT_DIR"
+
+echo "Exporting $MONGO_URI/$DB to $OUT_DIR..."
+
+mongoexport --uri "$MONGO_URI" --db "$DB" --collection users --out "$OUT_DIR/users.json" --jsonArray
+mongoexport --uri "$MONGO_URI" --db "$DB" --collection tasks --out "$OUT_DIR/tasks.json" --jsonArray
+mongoexport --uri "$MONGO_URI" --db "$DB" --collection pomodoro_sessions --out "$OUT_DIR/pomodoro_sessions.json" --jsonArray
+mongoexport --uri "$MONGO_URI" --db "$DB" --collection events --out "$OUT_DIR/events.json" --jsonArray
+
+echo "Done."
+```
 
 ## Run
 
@@ -91,7 +154,7 @@ npm run server
 node server/server.js
 ```
 
-The server listens on `http://localhost:3000`.
+The server listens on `http://localhost:8080`.
 
 ### Electron Mode (Desktop App)
 
@@ -110,10 +173,30 @@ This launches the Electron desktop application.
 http://localhost:8080
 ```
 
-**Note:** In web mode, the app communicates with the backend via HTTP requests to `http://localhost:3000`. In Electron mode, it uses IPC (Inter-Process Communication) for better performance.
+**Note:** The app communicates with the backend via `API_CONFIG.BASE_URL` (default `http://localhost:8080`). To auto-connect to the live server in Electron, set `isDevelopment` to false in [client/config.js](client/config.js).
+
+## Contributions
+
+| Student | Area | Summary |
+|--------|------|---------|
+| Student A | Backend | Implemented HTTP server and users/tasks APIs |
+| Student B | Frontend Tasks | Built tasks table, modal, toggle states |
+| Student C | Calendar | Week events loader and UI integration |
+| Student D | Dashboard | Upcoming tasks and pie chart visualization |
+| Student E | Auth/UI | Login/Register screens and Profile page |
+
+Replace rows with actual student names and contributions.
 
 ## API
 
-- `GET /users` — returns all users from the `users` collection (used by the renderer for demo data).
+ - `POST /api/login` — login with `email` + `password`
+ - `POST /api/register` — register with `email` + `password`
+ - `GET /users` — list users
+ - `PATCH /users/:username` — update user password
+ - `GET /tasks?user_email=...` — list tasks for a user
+ - `POST /tasks` — create task
+ - `PATCH /tasks/toggle` — toggle task completion
+ - `GET /calendar-events?user_email=...&week_start=...&week_end=...` — list events for a week
+ - `POST /calendar-events` — create event
 
 ```
