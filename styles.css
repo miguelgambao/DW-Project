@@ -11,7 +11,8 @@
   --black: #2c2c2c;
   --yellow-primary: #F6D47F;
   --yellow-lighter: #FFD54F;
-  --warning-red:#FF6633;
+  --warning-red:#F36969;
+  --warning-hover:#F54949;
 
   --border-radius: 8px;
   --font-size-p-small:0.75rem;
@@ -395,4 +396,25 @@ h2{
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.error {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+
+    background-color: var(--warning-red);
+    width: fit-content;
+    padding: 0.5rem 0.75rem;
+}
+
+
+.error:hover{
+    background-color: var(--warning-hover);
+}
+
+.profile-field{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
 }
