@@ -60,6 +60,15 @@ function getModeLabel(mode) {
   return labels[mode] || 'Work Session';
 }
 
+function showNotification(title, body) {
+  // Use Electron notification if available, otherwise fallback to browser alert
+  if (window.api && window.api.showNotification) {
+    window.api.showNotification(title, body);
+  } else {
+    alert(`${title}\n${body}`);
+  }
+}
+
 // Timer functions
 function startTimer() {
   // Clear any existing interval to prevent piling up
@@ -88,10 +97,10 @@ function handleTimerComplete() {
     
     // Check if it's time for a long break
     if (pomodoroCount % longBreakInterval === 0) {
-      alert(`Pomodoro complete! Time for a long break.`);
+      showNotification('Pomodoro Complete!', 'Time for a long break.');
       currentMode = 'longBreak';
     } else {
-      alert(`Pomodoro complete! Starting short break ${pomodoroCount} of ${longBreakInterval}.`);
+      showNotification('Pomodoro Complete!', `Starting short break ${pomodoroCount} of ${longBreakInterval}.`);
       currentMode = 'shortBreak';
     }
     
@@ -99,13 +108,13 @@ function handleTimerComplete() {
     updateDisplay();
     updateActiveModeButton();
   } else if (currentMode === 'shortBreak') {
-    alert('Short break complete! Ready for another pomodoro.');
+    showNotification('Short Break Complete!', 'Ready for another pomodoro.');
     currentMode = 'pomodoro';
     timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
     updateDisplay();
     updateActiveModeButton();
   } else if (currentMode === 'longBreak') {
-    alert('Long break complete! Starting fresh cycle.');
+    showNotification('Long Break Complete!', 'Starting fresh cycle.');
     pomodoroCount = 0; // Reset counter after long break
     currentMode = 'pomodoro';
     timeRemaining = durations[currentMode] * SECONDS_PER_MINUTE;
@@ -152,13 +161,8 @@ function switchMode(mode) {
 function updateDisplay() {
   if (timerDisplay) {
     timerDisplay.textContent = formatTime(timeRemaining);
-    // Add break class when in short or long break mode
-    if (currentMode === 'shortBreak' || currentMode === 'longBreak') {
-      timerDisplay.classList.add('break-mode');
-    } else {
-      timerDisplay.classList.remove('break-mode');
-    }
   }
+  
   updateDashboardWidget();
 }
 
@@ -169,12 +173,6 @@ function updateDashboardWidget() {
   
   if (dashboardTimer) {
     dashboardTimer.textContent = formatTime(timeRemaining);
-    // Add break class when in short or long break mode
-    if (currentMode === 'shortBreak' || currentMode === 'longBreak') {
-      dashboardTimer.classList.add('break-mode');
-    } else {
-      dashboardTimer.classList.remove('break-mode');
-    }
   }
   
   if (dashboardBtn) {

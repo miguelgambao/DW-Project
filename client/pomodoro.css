@@ -43,16 +43,32 @@
   color: var(--white);
 }
 
+.mode-btn.active[data-mode="shortBreak"],
+.mode-btn.active[data-mode="longBreak"] {
+  border-color: var(--yellow-primary);
+  background-color: var(--yellow-primary);
+  color: var(--black);
+}
+
+.mode-btn[data-mode="shortBreak"]:hover,
+.mode-btn[data-mode="longBreak"]:hover {
+  border-color: var(--yellow-primary);
+  color: var(--yellow-primary);
+}
+
+.mode-btn.active[data-mode="shortBreak"]:hover,
+.mode-btn.active[data-mode="longBreak"]:hover {
+  background-color: var(--yellow-lighter);
+  border-color: var(--yellow-lighter);
+  color: var(--black);
+}
+
 .timer-display {
   font-size: 8rem;
   font-weight: 700;
   font-family: 'Inter', monospace;
   margin: 2rem 0;
-  transition: color 0.3s ease;
-}
-
-.timer-display.break-mode {
-  color: var(--yellow-primary);
+  color: var(--black);
 }
 
 

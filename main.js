@@ -1,4 +1,4 @@
-const { app, ipcMain, BrowserWindow } = require("electron");
+const { app, ipcMain, BrowserWindow, Notification } = require("electron");
 const path = require("path");
 const { createUser, loginUser } = require("./client/login");
 
@@ -34,6 +34,17 @@ async function createWindow() {
 
   ipcMain.handle("login-user", async (event, email, password) => {
     return await loginUser(email, password);
+  });
+
+  ipcMain.handle("show-notification", async (event, title, body) => {
+    if (Notification.isSupported()) {
+      const notification = new Notification({
+        title: title,
+        body: body,
+        icon: path.join(__dirname, "assets/icons/icon.png")
+      });
+      notification.show();
+    }
   });
 }
 
