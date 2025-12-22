@@ -192,7 +192,6 @@
   background-color: var(--yellow-lighter);
 }
 
-/* Dashboard pomodoro button styling */
 .button-primary.dashboard-timer-btn {
   width: fit-content !important;
   min-width: 100px;
