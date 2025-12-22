@@ -1,4 +1,5 @@
 import { PieChart } from "./utilities/pie_chart.js";
+import { getTimerState, toggleTimer, resetTimerFromDashboard } from "./pomodoro.js";
 
 export async function showDashboardTasks(userEmail) {
   const contentSection = document.querySelector(".content");
@@ -40,11 +41,50 @@ export async function showDashboardTasks(userEmail) {
       <div class="your-pomodoro-container">
         <h3>Your Pomodoro</h3>
         <div class="pomodoro-card">
-          <h1 class="font-alert">30:00</h1>
-          <button class="button-secondary M">Start</button>
+            <h4 id="dashboardModeLabel">Work Session</h4>
+            <h1 class="font-alert" id="dashboardTimerDisplay">25:00</h1>
+            <div class="pomodoro-controls">
+              <button class="button-primary M dashboard-timer-btn" id="dashboardTimerBtn">Start</button>
+              <button class="button-secondary M" id="dashboardResetBtn">Reset</button>
+            </div>
+        </div>
         </div>
       </div>
     `;
+    
+    // Update dashboard widget with current timer state
+    const timerState = getTimerState();
+    const dashboardTimer = document.getElementById('dashboardTimerDisplay');
+    const dashboardBtn = document.getElementById('dashboardTimerBtn');
+    const dashboardMode = document.getElementById('dashboardModeLabel');
+    
+    if (dashboardTimer) {
+      dashboardTimer.textContent = timerState.formattedTime;
+    }
+    
+    if (dashboardMode) {
+      dashboardMode.textContent = timerState.modeLabel;
+    }
+    
+    if (dashboardBtn) {
+      dashboardBtn.textContent = timerState.isRunning ? 'Pause' : 'Start';
+      // Add paused class when stopped
+      if (timerState.isRunning) {
+        dashboardBtn.classList.remove('paused');
+      } else {
+        dashboardBtn.classList.add('paused');
+      }
+      dashboardBtn.addEventListener('click', () => {
+        toggleTimer();
+      });
+    }
+    
+    const dashboardResetBtn = document.getElementById('dashboardResetBtn');
+    if (dashboardResetBtn) {
+      dashboardResetBtn.addEventListener('click', () => {
+        resetTimerFromDashboard();
+      });
+    }
 
     const taskList = document.getElementById("task-list");
     const table = document.querySelector(".tasks-table");

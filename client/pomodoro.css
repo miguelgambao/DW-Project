@@ -1,0 +1,219 @@
+
+.pomodoro-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pomodoro-timer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem;
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mode-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mode-btn {
+  padding: 0.5rem 1.5rem;
+  border: 2px solid var(--gray);
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  color: var(--gray-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover {
+  border-color: var(--dark-green);
+  color: var(--dark-green);
+}
+
+.mode-btn.active {
+  border-color: var(--dark-green);
+  background-color: var(--dark-green);
+  color: var(--white);
+}
+
+.mode-btn.active[data-mode="shortBreak"],
+.mode-btn.active[data-mode="longBreak"] {
+  border-color: var(--yellow-primary);
+  background-color: var(--yellow-primary);
+  color: var(--black);
+}
+
+.mode-btn[data-mode="shortBreak"]:hover,
+.mode-btn[data-mode="longBreak"]:hover {
+  border-color: var(--yellow-primary);
+  color: var(--yellow-primary);
+}
+
+.mode-btn.active[data-mode="shortBreak"]:hover,
+.mode-btn.active[data-mode="longBreak"]:hover {
+  background-color: var(--yellow-lighter);
+  border-color: var(--yellow-lighter);
+  color: var(--black);
+}
+
+.timer-display {
+  font-size: 8rem;
+  font-weight: 700;
+  font-family: 'Inter', monospace;
+  margin: 2rem 0;
+  color: var(--black);
+}
+
+
+.pomodoro-settings {
+  background-color: var(--white);
+  padding: 1.5rem 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pomodoro-settings h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: var(--darker-gray);
+}
+
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.time-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.time-selector label {
+  font-size: 0.875rem;
+  color: var(--darker-gray);
+}
+
+.time-selector input[type="number"] {
+  width: 80px;
+  padding: 0.5rem;
+  border: 1px solid var(--gray);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  text-align: center;
+}
+
+.time-selector input[type="number"]:focus {
+  outline: none;
+  border-color: var(--dark-green);
+}
+
+.time-selector input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  accent-color: var(--dark-green);
+  border-radius: var(--border-radius);
+}
+
+.time-selector label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem 0;
+}
+
+.pomodoro-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pomodoro-controls .button-primary {
+  width: fit-content;
+  min-width: 300px;
+  background: linear-gradient(135deg, #5fa763 0%, #4d8f51 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(95, 167, 99, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.pomodoro-controls .button-primary.paused {
+  background: linear-gradient(135deg, var(--dark-green) 0%, var(--dark-green-secondary) 100%);
+  box-shadow: 0 4px 12px rgba(59, 98, 63, 0.4);
+}
+
+.pomodoro-controls .button-primary:hover {
+  background: linear-gradient(135deg, #4d8f51 0%, #5fa763 100%);
+}
+
+.pomodoro-controls .button-primary.paused:hover {
+  background: linear-gradient(135deg, var(--dark-green-secondary) 0%, var(--dark-green) 100%);
+}
+
+.pomodoro-controls .button-secondary {
+  width: fit-content;
+  min-width: 100px;
+  background-color: var(--yellow-primary);
+  border: none;
+  color: var(--black);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.pomodoro-controls .button-secondary:hover {
+  background-color: var(--yellow-lighter);
+}
+
+.pomodoro-settings .button-secondary {
+  background-color: var(--yellow-primary);
+  border: none;
+  color: var(--black);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.pomodoro-settings .button-secondary:hover {
+  background-color: var(--yellow-lighter);
+}
+
+.button-primary.dashboard-timer-btn {
+  width: fit-content !important;
+  min-width: 100px;
+  background: linear-gradient(135deg, #5fa763 0%, #4d8f51 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(95, 167, 99, 0.3);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.button-primary.dashboard-timer-btn.paused {
+  background: linear-gradient(135deg, var(--dark-green) 0%, var(--dark-green-secondary) 100%);
+  box-shadow: 0 4px 12px rgba(59, 98, 63, 0.4);
+}
+
+.button-primary.dashboard-timer-btn:hover {
+  background: linear-gradient(135deg, #4d8f51 0%, #5fa763 100%);
+}
+
+.button-primary.dashboard-timer-btn.paused:hover {
+  background: linear-gradient(135deg, var(--dark-green-secondary) 0%, var(--dark-green) 100%);
+}
+
+
