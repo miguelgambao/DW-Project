@@ -100,7 +100,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         <button class="button-terciary M" id="calendarBtn">Calendar</button>
                         <button class="button-terciary M" id="tasksBtn">Tasks</button>
                         <button class="button-terciary M" id="pomodoroBtn">Pomodoro</button>
-                        <button class="profile">Profile</button>
+                        <button class="button-terciary M" id="profileBtn">Profile</button>
                     </nav>
                 </aside>
                 <div>
@@ -135,7 +135,7 @@ window.addEventListener("DOMContentLoaded", () => {
             });
 
         dashboardSection
-            .querySelector(".profile")
+            .querySelector("#profileBtn")
             .addEventListener("click", () => {
                 showProfile(username);
             });

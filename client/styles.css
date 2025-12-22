@@ -203,6 +203,24 @@ aside img {
   background-color: var(--light-green-secondary);
 }
 
+.aside-nav .profile {
+  text-align: left;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: var(--font-size-label);
+  background: none;
+  border: none;
+  color: var(--primary-green);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s;
+  font-family: inherit;
+}
+
+.aside-nav .profile:hover {
+  background-color: var(--light-green-secondary);
+}
+
 .pie-chart {
   width: 50%;
   max-width: 250px;

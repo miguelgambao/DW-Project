@@ -5,7 +5,7 @@ export async function showProfile(username) {
     title.textContent = "Profile"
 
     const res = await fetch(
-        `http://localhost:3000/users/${encodeURIComponent(username)}`
+        `http://localhost:8080/users/${encodeURIComponent(username)}`
     )
     if (!res.ok) return alert("Failed to load profile")
 
@@ -46,7 +46,7 @@ export async function showProfile(username) {
         if (!newPassword) return alert("Password cannot be empty")
 
         const res = await fetch(
-            `http://localhost:3000/users/${encodeURIComponent(username)}`,
+            `http://localhost:8080/users/${encodeURIComponent(username)}`,
             {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },

@@ -54,29 +54,9 @@ const updatePassword = (username, password) =>
         db.collection("users").updateOne({username: username.trim().toLowerCase()}, {$set: {password: password.trim()}})
     ).then(() => true);
 
-<<<<<<< HEAD
 module.exports = {
     loginUser,
     createUser,
     getUser,
     updatePassword,
 };
-=======
-    const normalizedUsername = username.trim().toLowerCase();
-
-    const existing = await db.collection("users").findOne({ username: normalizedUsername });
-    if (existing) return null;
-
-    const result = await db.collection("users").insertOne({
-      username: normalizedUsername,
-      password: password.trim()
-    });
-
-    return result.insertedId;
-  } finally {
-    await client.close();
-  }
-}
-
-module.exports = { createUser, loginUser };
->>>>>>> pomodoro

@@ -27,13 +27,6 @@ async function createWindow() {
     titleBarStyle: isMac ? "hiddenInset" : "hidden",
   };
 
-<<<<<<< HEAD
-  const window = new BrowserWindow(windowOptions);
-  // use for testing locally on electron 
-   window.loadURL("http://localhost:8080");
-  //window.loadURL("http://10.17.0.28:8080");
-  window.on("closed", () => app.quit());
-=======
   mainWindow = new BrowserWindow(windowOptions);
   // use for testing locally on electron 
   mainWindow.loadURL("http://localhost:8080");
@@ -89,7 +82,6 @@ async function createWindow() {
     }
     app.quit();
   });
->>>>>>> pomodoro
 
   ipcMain.handle("create-user", async (event, email, password) => {
     return await createUser(email, password);
