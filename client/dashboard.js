@@ -52,7 +52,6 @@ export async function showDashboardTasks(userEmail) {
       </div>
     `;
     
-    // Update dashboard widget with current timer state
     const timerState = getTimerState();
     const dashboardTimer = document.getElementById('dashboardTimerDisplay');
     const dashboardBtn = document.getElementById('dashboardTimerBtn');
@@ -68,7 +67,6 @@ export async function showDashboardTasks(userEmail) {
     
     if (dashboardBtn) {
       dashboardBtn.textContent = timerState.isRunning ? 'Pause' : 'Start';
-      // Add paused class when stopped
       if (timerState.isRunning) {
         dashboardBtn.classList.remove('paused');
       } else {
