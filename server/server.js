@@ -89,7 +89,7 @@ async function startServer() {
                 return res.end(JSON.stringify(users));
             }
 
-            if (method === "GET" && reqUrl.startsWith("/tasks")) {
+            if (method === "GET" && (reqUrl === "/tasks" || reqUrl.startsWith("/tasks?"))) {
                 const urlObj = new URL(reqUrl, `http://${headers.host}`);
                 const userEmail = urlObj.searchParams.get("user_email");
 
