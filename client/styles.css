@@ -11,7 +11,8 @@
   --black: #2c2c2c;
   --yellow-primary: #F6D47F;
   --yellow-lighter: #FFD54F;
-  --warning-red:#FF6633;
+  --warning-red:#F36969;
+  --warning-hover:#F54949;
 
   --border-radius: 8px;
   --font-size-p-small:0.75rem;
@@ -139,6 +140,12 @@ small{
   align-items: center;
 }
 
+.pomodoro-card .pomodoro-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
 .titleBar {
   -webkit-app-region: drag;
   display: flex;
@@ -169,9 +176,68 @@ aside {
   z-index: 10000;
 }
 aside img {
-  width: 30%;
+  width: 50%;
   margin-top: 7vh;
   margin-left: 2vw;
+}
+
+.aside-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 3rem;
+  padding: 0 1rem;
+}
+
+.aside-nav .button-terciary {
+  text-align: left;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: var(--font-size-label);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.aside-nav .button-terciary img {
+  height: 1.25rem;
+  width: 1.25rem;
+  flex-shrink: 0;
+  display: block;
+  margin: 0;
+}
+
+.aside-nav .button-terciary:hover {
+  background-color: var(--light-green-secondary);
+}
+
+.aside-nav .button-terciary.active {
+  background-color: var(--light-green-secondary);
+}
+
+.aside-nav .button-terciary.active:hover {
+  background-color: var(--light-green-secondary);
+}
+
+.aside-nav .profile {
+  text-align: left;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: var(--font-size-label);
+  background: none;
+  border: none;
+  color: var(--primary-green);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s;
+  font-family: inherit;
+}
+
+.aside-nav .profile:hover {
+  background-color: var(--light-green-secondary);
 }
 
 .pie-chart {
@@ -183,6 +249,11 @@ aside img {
 
 .tasks-table{
   width: 100%;
+  border-collapse: collapse;
+}
+
+.tasks-table tr{
+  border: 1px solid var(--light-green-secondary);
 }
 
 .tasks-table th{
@@ -191,9 +262,15 @@ aside img {
   padding: 0.65rem 1rem;
   font-size: var(--font-size-button-M);
   font-weight: normal;
-  border-top-left-radius: var(--border-radius);
-  border-top-right-radius: var(--border-radius);
   text-align: left;
+}
+
+.tasks-table thead tr:first-child th:first-child {
+  border-top-left-radius: var(--border-radius);
+}
+
+.tasks-table thead tr:first-child th:last-child {
+  border-top-right-radius: var(--border-radius);
 }
 
 .tasks-table td{
@@ -202,13 +279,23 @@ aside img {
   padding: 0.65rem 1rem;
   font-size: var(--font-size-button-M);
   margin:0;
+  border: 1px solid var(--light-green-secondary);
 }
 
-.tasks-table tr:last-child td:first-child {
+.task-description, .task-title{
+  display: inline-block;
+  max-width: 28ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.tasks-table tbody tr:last-child td:first-child {
   border-bottom-left-radius: var(--border-radius);
 }
 
-.tasks-table tr:last-child td:last-child {
+.tasks-table tbody tr:last-child td:last-child {
   border-bottom-right-radius: var(--border-radius);
 }
 
@@ -263,7 +350,7 @@ aside img {
 }
 
 .input-secondary{
-    width:100%;
+  width:100%;
   padding: 0.5rem;
   margin: 0.2rem;
   box-sizing: border-box;
@@ -331,7 +418,7 @@ label{
 
 .paragraph-small{
   font-size: var(--font-size-p-small);
-  color: var(--black)
+  color: var(--black);
 }
 
 .button-terciary{
@@ -359,3 +446,39 @@ h2{
   align-items: center;
 }
 
+.state-done {
+    color: var(--dark-green);
+    font-weight: 600;
+}
+
+.state-pending {
+    color: orange;
+    font-weight: 600;
+}
+
+.tasks-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.error {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+
+    background-color: var(--warning-red);
+    width: fit-content;
+    padding: 0.5rem 0.75rem;
+}
+
+
+.error:hover{
+    background-color: var(--warning-hover);
+}
+
+.profile-field{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
