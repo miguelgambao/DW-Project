@@ -56,7 +56,7 @@ export function showTasks(username) {
             loadMoreBtn.style.display = "block";
         }
 
-        const url = new URL("http://localhost:3000/tasks");
+        const url = new URL("http://10.17.0.28:8080/tasks");
         url.searchParams.set("user_email", username);
         url.searchParams.set("page", currentPage);
 
@@ -102,10 +102,10 @@ export function showTasks(username) {
         });
         tbody.querySelectorAll(".task-completed-checkbox").forEach((checkbox) => {
             checkbox.addEventListener("change", async (e) => {
-                const taskId = Number(e.target.dataset.id);
+                const taskId = e.target.dataset.id;
                 const completed = e.target.checked;
 
-                await fetch("http://localhost:3000/tasks/toggle", {
+                await fetch("http://10.17.0.28:8080/tasks/toggle", {
                     method: "PATCH",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({taskId, completed}),
@@ -176,7 +176,7 @@ export function showTasks(username) {
                     user_email: username,
                 };
 
-                const response = await fetch("http://localhost:3000/tasks", {
+                const response = await fetch("http://10.17.0.28:8080/tasks", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(taskData),
@@ -185,7 +185,6 @@ export function showTasks(username) {
                 if (response.ok) {
                     alert("Task created!");
 
-                    // reset & reload list
                     currentPage = 1;
                     tbody.innerHTML = "";
                     loadTasks(true);
