@@ -51,7 +51,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     if (savedUser) {
-        showDashboard(savedUser.email);
+        showDashboard(savedUser.email.toLowerCase());
         return;
     }
 
@@ -81,8 +81,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const userId = await loginUser(email, password);
         if (userId) {
-            localStorage.setItem("loggedInUser", JSON.stringify({ email, userId }));
-            showDashboard(email);
+            localStorage.setItem("loggedInUser", JSON.stringify({ email: email.toLowerCase(), userId }));
+            showDashboard(email.toLowerCase());
         } else {
             alert("Invalid email or password.");
         }

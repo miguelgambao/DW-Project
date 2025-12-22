@@ -1,17 +1,14 @@
-import { api } from './api.js'
-
+import { api } from './api.js';
 export async function showProfile(username) {
     const contentSection = document.querySelector("section.content")
     const title = document.querySelector(".general-title")
 
-    if (title) title.textContent = "Profile"
-    if (!contentSection) return
-
-    let user
+    if (title) title.textContent = "Profile";
+    let user;
     try {
-        user = await api.getUser(username)
+        user = await api.getUser(username);
     } catch (error) {
-        return alert("Failed to load profile")
+        return alert("Failed to load profile");
     }
 
     contentSection.innerHTML = `
@@ -48,12 +45,12 @@ export async function showProfile(username) {
         const newPassword = document.getElementById("profile-password").value
         if (!newPassword) return alert("Password cannot be empty")
 
-        const success = await api.updateUserPassword(username, newPassword)
-        if (success) {
-            alert("Password updated successfully")
-            document.getElementById("profile-password").value = ""
-        } else {
-            alert("Failed to update password")
+        try {
+            await api.updateUserPassword(username, newPassword);
+            alert("Password updated successfully");
+            document.getElementById("profile-password").value = "";
+        } catch (error) {
+            alert("Failed to update password");
         }
     })
 

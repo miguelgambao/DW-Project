@@ -186,7 +186,13 @@ async function startServer() {
                         return res.end(JSON.stringify({error: "Username is required"}));
                     }
 
-                    const user = await db.collection("users").findOne({username});
+                    // Try to find by username or email field
+                    const user = await db.collection("users").findOne({
+                        $or: [
+                            { username: username },
+                            { email: username }
+                        ]
+                    });
 
                     if (!user) {
                         res.writeHead(404, {"Content-Type": "application/json"});
@@ -196,7 +202,7 @@ async function startServer() {
                     res.writeHead(200, {"Content-Type": "application/json"});
                     return res.end(
                         JSON.stringify({
-                            username: user.username,
+                            username: user.username || user.email,
                         })
                     );
                 }
