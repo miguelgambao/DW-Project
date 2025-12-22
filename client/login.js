@@ -1,47 +1,27 @@
-const { MongoClient } = require("mongodb");
-
-const url = "mongodb://localhost:27017";
-const dbName = "pomodoro_app";
+const SERVER_URL = "http://localhost:8080";
 
 async function loginUser(username, password) {
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    const db = client.db("pomodoro_app");
+  const res = await fetch(`${SERVER_URL}/api/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: username, password })
+  });
 
-    const user = await db.collection("users").findOne({
-      username: username.trim().toLowerCase(),
-      password: password.trim()
-    });
-
-    return user ? user._id : null;
-  } finally {
-    await client.close();
-  }
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.userId || null;
 }
 
 async function createUser(username, password) {
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    const db = client.db("pomodoro_app");
+  const res = await fetch(`${SERVER_URL}/api/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: username, password })
+  });
 
-    const normalizedUsername = username.trim().toLowerCase();
-
-    const existing = await db.collection("users").findOne({ username: normalizedUsername });
-    if (existing) return null;
-
-    const result = await db.collection("users").insertOne({
-      username: normalizedUsername,
-      password: password.trim()
-    });
-
-    return result.insertedId;
-  } finally {
-    await client.close();
-  }
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.userId || null;
 }
-
-
 
 module.exports = { createUser, loginUser };

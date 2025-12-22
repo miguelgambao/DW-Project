@@ -29,8 +29,8 @@ async function createWindow() {
 
   mainWindow = new BrowserWindow(windowOptions);
   // use for testing locally on electron 
-  //mainWindow.loadURL("http://localhost:8080");
-  mainWindow.loadURL("http://10.17.0.28:8080");
+  mainWindow.loadURL("http://localhost:8080");
+  //mainWindow.loadURL("http://10.17.0.28:8080");
   
   mainWindow.on("minimize", () => {
     widgetManuallyClosed = false;
@@ -119,6 +119,39 @@ async function createWindow() {
     if (widgetWindow && !widgetWindow.isDestroyed()) {
       widgetManuallyClosed = true;
       widgetWindow.close();
+    }
+  });
+
+  ipcMain.handle("get-calendar-events", async (event, userEmail, weekStart, weekEnd) => {
+    try {
+      const params = new URLSearchParams({
+        user_email: userEmail,
+        week_start: weekStart,
+        week_end: weekEnd,
+      });
+
+      const res = await fetch(`http://localhost:8080/calendar-events?${params.toString()}`);
+      if (!res.ok) throw new Error("Failed to fetch events");
+      return await res.json();
+    } catch (err) {
+      console.error("Error loading events:", err);
+      return [];
+    }
+  });
+
+  ipcMain.handle("create-calendar-event", async (event, eventData) => {
+    try {
+      const res = await fetch("http://localhost:8080/calendar-events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventData),
+      });
+
+      if (!res.ok) throw new Error("Failed to create event");
+      return await res.json();
+    } catch (err) {
+      console.error("Error creating event:", err);
+      throw err;
     }
   });
 }

@@ -153,7 +153,31 @@ async function startServer() {
 
             if (method === "POST" && reqUrl === "/calendar-events") {
                 const event = await parseBody(req);
-                const result = await db.collection("events").insertOne(event);
+
+                // Normalize dates to actual Date objects for proper range queries
+                const toDate = (value) => {
+                    const d = new Date(value);
+                    return Number.isNaN(d.getTime()) ? null : d;
+                };
+
+                const startDate = toDate(event.start_time);
+                const endDate = toDate(event.end_time);
+
+                if (!event.user_email || !startDate || !endDate) {
+                    res.writeHead(400);
+                    return res.end(JSON.stringify({error: "Missing or invalid event fields"}));
+                }
+
+                const payload = {
+                    title: event.title || "",
+                    description: event.description || "",
+                    all_day: Boolean(event.all_day),
+                    user_email: event.user_email,
+                    start_time: startDate,
+                    end_time: endDate,
+                };
+
+                const result = await db.collection("events").insertOne(payload);
                 res.writeHead(201);
                 return res.end(JSON.stringify({id: result.insertedId}));
             }
