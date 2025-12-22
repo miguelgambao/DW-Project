@@ -1,12 +1,11 @@
 const http = require("http");
-const {MongoClient} = require("mongodb");
+const {MongoClient, ObjectId} = require("mongodb");
 const fs = require("fs");
 const path = require("path");
 
 const url = "mongodb://localhost:27017";
 const dbName = "pomodoro_app";
 
-// --- Helpers ---
 function parseBody(req) {
     return new Promise((resolve, reject) => {
         let body = "";
@@ -14,7 +13,7 @@ function parseBody(req) {
         req.on("end", () => {
             try {
                 resolve(JSON.parse(body));
-            } catch (e) {
+            } catch {
                 resolve({});
             }
         });
@@ -23,20 +22,16 @@ function parseBody(req) {
 }
 
 function getContentType(ext) {
-    switch (ext) {
-        case ".html":
-            return "text/html";
-        case ".js":
-            return "application/javascript";
-        case ".css":
-            return "text/css";
-        case ".svg":
-            return "image/svg+xml";
-        case ".json":
-            return "application/json";
-        default:
-            return "text/plain";
-    }
+    return (
+        {
+            ".html": "text/html",
+            ".js": "application/javascript",
+            ".css": "text/css",
+            ".svg": "image/svg+xml",
+            ".woff2": "font/woff2",
+            ".json": "application/json",
+        }[ext] || "text/plain"
+    );
 }
 
 async function startServer() {
@@ -44,120 +39,71 @@ async function startServer() {
     const db = client.db(dbName);
     console.log("Connected to MongoDB");
 
+    const STATIC_CLIENT_DIR = path.join(__dirname, "..", "client");
+    const STATIC_ASSETS_DIR = path.join(__dirname, "..", "assets");
+
     const server = http.createServer(async (req, res) => {
-        // --- CORS ---
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         if (req.method === "OPTIONS") {
             res.writeHead(200);
-            res.end();
-            return;
+            return res.end();
         }
 
-        try {
-            const {method, url: reqUrl, headers} = req;
+        const {method, url: reqUrl, headers} = req;
 
-            // --- API ROUTES ---
+        try {
             if (method === "POST" && reqUrl === "/api/login") {
                 const {email, password} = await parseBody(req);
                 const user = await db.collection("users").findOne({
                     username: email.trim().toLowerCase(),
                     password: password.trim(),
                 });
-                if (user) res.end(JSON.stringify({userId: user._id}));
-                else res.writeHead(401).end(JSON.stringify({userId: null, error: "Invalid credentials"}));
-                return;
+
+                if (!user) {
+                    res.writeHead(401);
+                    return res.end(JSON.stringify({error: "Invalid credentials"}));
+                }
+
+                return res.end(JSON.stringify({userId: user._id}));
             }
 
             if (method === "POST" && reqUrl === "/api/register") {
                 const {email, password} = await parseBody(req);
-                const normalizedUsername = email.trim().toLowerCase();
-                const existing = await db.collection("users").findOne({username: normalizedUsername});
-                if (existing) {
+                const username = email.trim().toLowerCase();
+
+                if (await db.collection("users").findOne({username})) {
                     res.writeHead(409);
-                    res.end(JSON.stringify({error: "User exists"}));
-                    return;
+                    return res.end(JSON.stringify({error: "User exists"}));
                 }
-                const result = await db.collection("users").insertOne({username: normalizedUsername, password});
-                res.writeHead(201).end(JSON.stringify({userId: result.insertedId}));
-                return;
+
+                const result = await db.collection("users").insertOne({username, password});
+                res.writeHead(201);
+                return res.end(JSON.stringify({userId: result.insertedId}));
             }
 
             if (method === "GET" && reqUrl === "/users") {
                 const users = await db.collection("users").find({}).toArray();
-                res.end(JSON.stringify(users));
-                return;
+                return res.end(JSON.stringify(users));
             }
 
             if (method === "GET" && reqUrl.startsWith("/tasks")) {
                 const urlObj = new URL(reqUrl, `http://${headers.host}`);
                 const userEmail = urlObj.searchParams.get("user_email");
-                const page = parseInt(urlObj.searchParams.get("page")) || 1;
-                const completed = urlObj.searchParams.get("completed");
-
-                const limit = 10;
-                const skip = (page - 1) * limit;
 
                 if (!userEmail) {
                     res.writeHead(400);
-                    res.end(JSON.stringify({error: "Missing user_email"}));
-                    return;
+                    return res.end(JSON.stringify({error: "Missing user_email"}));
                 }
 
-                const query = {user_email: userEmail};
-
-                if (completed !== null) {
-                    query.completed = completed === "true";
-                }
-
-                const tasks = await db
-                .collection("tasks")
-                .find(query)
-                .sort({due_date: 1})
-                .skip(skip)
-                .limit(limit)
-                .toArray();
-
-                res.writeHead(200, {"Content-Type": "application/json"});
-                res.end(JSON.stringify(tasks));
-                return;
-            }
-
-            if (method === "PATCH" && reqUrl === "/tasks/toggle") {
-                const {taskId, completed} = await parseBody(req);
-
-                if (!taskId || typeof completed !== "boolean") {
-                    res.writeHead(400);
-                    res.end(JSON.stringify({error: "Invalid data"}));
-                    return;
-                }
-
-                await db.collection("tasks").updateOne(
-                    {_id: taskId},
-                    {
-                        $set: {
-                            completed,
-                            updated_at: new Date().toISOString().split("T")[0],
-                        },
-                    }
-                );
-
-                res.writeHead(200, {"Content-Type": "application/json"});
-                res.end(JSON.stringify({success: true}));
-                return;
+                const tasks = await db.collection("tasks").find({user_email: userEmail}).toArray();
+                return res.end(JSON.stringify(tasks));
             }
 
             if (method === "POST" && reqUrl === "/tasks") {
                 const data = await parseBody(req);
-
-                if (!data.title || !data.user_email || !data.due_date) {
-                    res.writeHead(400);
-                    res.end(JSON.stringify({error: "Missing required fields"}));
-                    return;
-                }
-
                 const now = new Date().toISOString().split("T")[0];
 
                 const task = {
@@ -172,97 +118,73 @@ async function startServer() {
                 };
 
                 const result = await db.collection("tasks").insertOne(task);
+                res.writeHead(201);
+                return res.end(JSON.stringify({id: result.insertedId}));
+            }
 
-                res.writeHead(201, {"Content-Type": "application/json"});
-                res.end(JSON.stringify({success: true, id: result.insertedId}));
-                return;
+            if (method === "PATCH" && reqUrl === "/tasks/toggle") {
+                const {taskId, completed} = await parseBody(req);
+
+                await db
+                .collection("tasks")
+                .updateOne(
+                    {_id: new ObjectId(taskId)},
+                    {$set: {completed, updated_at: new Date().toISOString().split("T")[0]}}
+                );
+
+                return res.end(JSON.stringify({success: true}));
             }
 
             if (method === "POST" && reqUrl === "/calendar-events") {
-                const data = await parseBody(req);
-                const event = {
-                    title: data.title,
-                    description: data.description,
-                    start_time: data.start_time,
-                    end_time: data.end_time,
-                    all_day: data.all_day,
-                    user_email: data.user_email,
-                };
+                const event = await parseBody(req);
                 const result = await db.collection("events").insertOne(event);
-                res.writeHead(201, {"Content-Type": "application/json"});
-                res.end(JSON.stringify({success: true, id: result.insertedId}));
-                return;
+                res.writeHead(201);
+                return res.end(JSON.stringify({id: result.insertedId}));
             }
 
             if (method === "GET" && reqUrl.startsWith("/calendar-events")) {
                 const urlObj = new URL(reqUrl, `http://${headers.host}`);
                 const userEmail = urlObj.searchParams.get("user_email");
-                const weekStart = urlObj.searchParams.get("week_start");
-                const weekEnd = urlObj.searchParams.get("week_end");
-
-                if (!userEmail || !weekStart || !weekEnd) {
-                    res.writeHead(400, {"Content-Type": "application/json"});
-                    res.end(JSON.stringify({error: "Missing parameters"}));
-                    return;
-                }
+                const weekStart = new Date(urlObj.searchParams.get("week_start"));
+                const weekEnd = new Date(urlObj.searchParams.get("week_end"));
 
                 const events = await db
                 .collection("events")
                 .find({
                     user_email: userEmail,
-                    $expr: {
-                        $or: [
-                            {
-                                $and: [
-                                    {$gte: [{$toDate: "$start_time"}, new Date(weekStart)]},
-                                    {$lte: [{$toDate: "$start_time"}, new Date(weekEnd)]},
-                                ],
-                            },
-                            {
-                                $and: [
-                                    {$gte: [{$toDate: "$end_time"}, new Date(weekStart)]},
-                                    {$lte: [{$toDate: "$end_time"}, new Date(weekEnd)]},
-                                ],
-                            },
-                            {
-                                $and: [
-                                    {$lte: [{$toDate: "$start_time"}, new Date(weekStart)]},
-                                    {$gte: [{$toDate: "$end_time"}, new Date(weekEnd)]},
-                                ],
-                            },
-                        ],
-                    },
+                    start_time: {$lte: weekEnd},
+                    end_time: {$gte: weekStart},
                 })
                 .toArray();
 
-                res.writeHead(200, {"Content-Type": "application/json"});
-                res.end(JSON.stringify(events));
-                return;
+                return res.end(JSON.stringify(events));
             }
 
-            // --- STATIC FILES ---
-            let filePath = reqUrl === "/" ? "index.html" : reqUrl.slice(1);
-            filePath = path.join(__dirname, filePath);
+            let filePath;
+            if (reqUrl === "/" || reqUrl === "/index.html") {
+                filePath = path.join(STATIC_CLIENT_DIR, "index.html");
+            } else if (reqUrl.startsWith("/assets/")) {
+                filePath = path.join(STATIC_ASSETS_DIR, reqUrl.replace("/assets/", ""));
+            } else {
+                filePath = path.join(STATIC_CLIENT_DIR, reqUrl);
+            }
 
-            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            if (fs.existsSync(filePath)) {
                 const ext = path.extname(filePath);
                 res.writeHead(200, {"Content-Type": getContentType(ext)});
-                res.end(fs.readFileSync(filePath));
-                return;
+                return res.end(fs.readFileSync(filePath));
             }
 
-            res.writeHead(404, {"Content-Type": "text/plain"});
+            res.writeHead(404);
             res.end("Not found");
         } catch (err) {
             console.error(err);
-            res.writeHead(500, {"Content-Type": "application/json"});
+            res.writeHead(500);
             res.end(JSON.stringify({error: "Internal server error"}));
         }
     });
 
-    server.listen(3000, "0.0.0.0", () => {
-        console.log("Server running on http://0.0.0.0:3000");
-    });
+    server.listen(8080, "0.0.0.0", () => console.log("Server running on http://0.0.0.0:8080"));
 }
 
-startServer().catch((err) => console.error(err));
+startServer().catch(console.error);
