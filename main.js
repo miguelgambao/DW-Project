@@ -2,6 +2,10 @@ const { app, ipcMain, BrowserWindow } = require('electron');
 const path = require('path');
 const { createUser, loginUser } = require('./client/login');
 
+// Configuration - set to true for local development, false for production
+const isDevelopment = false
+const SERVER_URL = isDevelopment ? 'http://localhost:8080' : 'http://10.17.0.28:8080';
+
 async function createWindow() {
     await app.whenReady();
 
@@ -24,7 +28,7 @@ async function createWindow() {
 
     const window = new BrowserWindow(windowOptions);
 
-    window.loadURL('http://10.17.0.28:8080');
+    window.loadURL(SERVER_URL);
     window.on('closed', () => app.quit());
 
     ipcMain.handle('create-user', async (event, email, password) => {
