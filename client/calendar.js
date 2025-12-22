@@ -253,10 +253,12 @@ export function showCalendar(username, referenceDate = new Date()) {
 
 });
 
+    loadWeekEvents(username, weekStart, weekEnd)
+    .then(events => {
+        console.log("📅 Eventos recebidos do backend:", events);
+        renderWeekEvents(events, new Date(weekStart), calendarGrid);
+    });
 
-    loadWeekEvents(username, weekStart, weekEnd).then(events => {
-    renderWeekEvents(events, new Date(weekStart), calendarGrid);
-});
 }
 
 function getWeekRange(referenceDate) {
