@@ -1,5 +1,4 @@
 import { Modal } from "./utilities/modal.js";
-import { API_CONFIG } from "./config.js";
 
 export function showTasks(username) {
     const contentSection = document.querySelector("section.content");
@@ -57,7 +56,7 @@ export function showTasks(username) {
             loadMoreBtn.style.display = "block";
         }
 
-        const url = new URL(`${API_CONFIG.BASE_URL}/tasks`);
+        const url = new URL("http://10.17.0.28:8080/tasks");
         url.searchParams.set("user_email", username);
         url.searchParams.set("page", currentPage);
 
@@ -106,7 +105,7 @@ export function showTasks(username) {
                 const taskId = e.target.dataset.id;
                 const completed = e.target.checked;
 
-                await fetch(`${API_CONFIG.BASE_URL}/tasks/toggle`, {
+                await fetch("http://10.17.0.28:8080/tasks/toggle", {
                     method: "PATCH",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({taskId, completed}),
@@ -177,7 +176,7 @@ export function showTasks(username) {
                     user_email: username,
                 };
 
-                const response = await fetch(`${API_CONFIG.BASE_URL}/tasks`, {
+                const response = await fetch("http://10.17.0.28:8080/tasks", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(taskData),

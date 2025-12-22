@@ -1,12 +1,12 @@
-import { API_CONFIG } from "../config.js";
-
 export const loadWeekEvents = (username, weekStart, weekEnd) => {
     if (!username || !weekStart || !weekEnd) {
         return Promise.resolve([]);
     }
 
+    const API_BASE = window.location.origin;
+
     return fetch(
-        `${API_CONFIG.BASE_URL}/calendar-events?${new URLSearchParams({
+        `${API_BASE}/calendar-events?${new URLSearchParams({
             user_email: username,
             week_start: new Date(weekStart).toISOString(),
             week_end: new Date(weekEnd).toISOString(),

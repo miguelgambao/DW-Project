@@ -2,7 +2,6 @@ import { RegisterUI } from "./registerUI.js";
 import { showDashboardTasks } from "./dashboard.js";
 import { showCalendar } from "./calendar.js";
 import { showTasks } from "./tasks.js";
-import { API_CONFIG } from "./config.js";
 
 const isElectron = window.api && window.api.isElectron;
 
@@ -10,7 +9,7 @@ async function loginUser(email, password) {
     if (isElectron) {
         return await window.api.loginUser(email, password);
     } else {
-        const res = await fetch(`${API_CONFIG.BASE_URL}/api/login`, {
+        const res = await fetch("http://10.17.0.28:8080/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
@@ -25,7 +24,7 @@ async function createUser(email, password) {
     if (isElectron) {
         return await window.api.createUser(email, password);
     } else {
-        const res = await fetch(`${API_CONFIG.BASE_URL}/api/register`, {
+        const res = await fetch("http://10.17.0.28:8080/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })

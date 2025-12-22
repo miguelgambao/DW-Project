@@ -1,6 +1,5 @@
 import { loadWeekEvents } from "./utilities/loadWeekEvents.js";
 import { Modal } from "./utilities/modal.js";
-import { API_CONFIG } from "./config.js";
 
 export function showCalendar(username, referenceDate = new Date()) {
     const contentSection = document.querySelector("section.content");
@@ -98,7 +97,7 @@ export function showCalendar(username, referenceDate = new Date()) {
                     user_email: username
                 };
 
-                const response = await fetch(`${API_CONFIG.BASE_URL}/calendar-events`, {
+                const response = await fetch("/calendar-events", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(eventData)
