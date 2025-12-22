@@ -231,15 +231,6 @@ async function startServer() {
 
             res.writeHead(404);
             res.end("Not found");
-
-            if (fs.existsSync(filePath)) {
-                const ext = path.extname(filePath);
-                res.writeHead(200, {"Content-Type": getContentType(ext)});
-                return res.end(fs.readFileSync(filePath));
-            }
-
-            res.writeHead(404);
-            res.end("Not found");
         } catch (err) {
             console.error(err);
             res.writeHead(500);

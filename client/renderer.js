@@ -1,9 +1,9 @@
-import {RegisterUI} from "./client/registerUI.js";
-import { showDashboardTasks } from './client/dashboard.js';
-import { showCalendar } from "./client/calendar.js";
-import { showTasks } from "./client/tasks.js";
-import { showProfile } from "./client/profile.js";
-import { api } from "./client/api.js";
+import {RegisterUI} from "./registerUI.js";
+import { showDashboardTasks } from './dashboard.js';
+import { showCalendar } from "./calendar.js";
+import { showTasks } from "./tasks.js";
+import { showProfile } from "./profile.js";
+import { api } from "./api.js";
 
 const isElectron = window.api && window.api.isElectron;
 
