@@ -135,6 +135,9 @@ function pauseTimer() {
   isRunning = false;
   clearInterval(timerInterval);
   updateDashboardWidget();
+  if (window.api && window.api.closeWidget) {
+    window.api.closeWidget();
+  }
 }
 
 function resetTimer() {
@@ -164,6 +167,7 @@ function updateDisplay() {
   }
   
   updateDashboardWidget();
+  updateWidgetWindow();
 }
 
 function updateDashboardWidget() {
@@ -199,6 +203,23 @@ function updateActiveModeButton() {
       btn.classList.remove('active');
     }
   });
+}
+
+function updateWidgetWindow() {
+  if (window.api && window.api.updateWidget) {
+    const timerData = {
+      formattedTime: formatTime(timeRemaining),
+      isRunning: isRunning,
+      currentMode: currentMode
+    };
+    window.api.updateWidget(timerData);
+  }
+}
+
+// Make updateWidgetWindow globally accessible for main process
+if (typeof window !== 'undefined') {
+  window.updateWidgetWindow = updateWidgetWindow;
+  window.isTimerRunning = () => isRunning;
 }
 
 // Event handlers
